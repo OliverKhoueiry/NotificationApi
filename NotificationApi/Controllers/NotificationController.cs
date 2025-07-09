@@ -1,4 +1,5 @@
 using BusinessLayer;
+using CommonLayer.Common;
 using CommonLayer.Models;
 using Microsoft.AspNetCore.Mvc;
 using NotificationApi.Services;
@@ -22,7 +23,8 @@ namespace NotificationApi.Controllers
         public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
             var result = await _businessHandler.RegisterAsync(request);
-            if (result == "Registration successful.")
+
+            if (result.Code == ResponseMessages.SuccessCode)
                 return Ok(result);
 
             return BadRequest(result);
@@ -31,22 +33,30 @@ namespace NotificationApi.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
-            var user = await _businessHandler.LoginAsync(request);
-            if (user == null)
-                return Unauthorized("Invalid credentials.");
+            var (result, user) = await _businessHandler.LoginAsync(request);
+
+            if (result.Code != ResponseMessages.SuccessCode || user == null)
+                return Ok(result);
 
             var token = _jwtService.GenerateToken(user);
 
             return Ok(new
             {
-                token,
-                user = new
-                {
-                    user.Id,
-                    user.Username,
-                    user.Email
-                }
+                result.Code,
+                result.Description,
+                token
             });
+        }
+
+        [HttpPost("forgetpassword")]
+        public async Task<IActionResult> ForgetPassword([FromBody] string email)
+        {
+            var result = await _businessHandler.ForgetPasswordAsync(email);
+
+            if (result.Code == ResponseMessages.SuccessCode)
+                return Ok(result);
+
+            return BadRequest(result);
         }
     }
 }

@@ -18,10 +18,15 @@ namespace NotificationApi.Services
         public JwtService(IConfiguration config)
         {
             var jwtSettings = config.GetSection("JwtSettings");
-            _secretKey = jwtSettings["SecretKey"];
-            _issuer = jwtSettings["Issuer"];
-            _audience = jwtSettings["Audience"];
-            _expiryMinutes = int.Parse(jwtSettings["ExpiryMinutes"]);
+
+            _secretKey = jwtSettings["SecretKey"] ?? throw new ArgumentNullException("JwtSettings:SecretKey missing");
+            _issuer = jwtSettings["Issuer"] ?? throw new ArgumentNullException("JwtSettings:Issuer missing");
+            _audience = jwtSettings["Audience"] ?? throw new ArgumentNullException("JwtSettings:Audience missing");
+
+            if (!int.TryParse(jwtSettings["ExpiryMinutes"], out _expiryMinutes))
+            {
+                _expiryMinutes = 60;
+            }
         }
 
         public string GenerateToken(User user)

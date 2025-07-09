@@ -18,26 +18,23 @@ namespace DataLayer
         public async Task<User?> GetUserByEmailAsync(string email)
         {
             using var connection = new SqlConnection(_connectionString);
-            var parameters = new DynamicParameters();
-            parameters.Add("@Email", email);
-
             return await connection.QueryFirstOrDefaultAsync<User>(
                 "GetUserByEmail",
-                parameters,
+                new { Email = email },
                 commandType: CommandType.StoredProcedure);
         }
 
         public async Task<int> AddUserAsync(User user)
         {
             using var connection = new SqlConnection(_connectionString);
-            var parameters = new DynamicParameters();
-            parameters.Add("@Username", user.Username);
-            parameters.Add("@Email", user.Email);
-            parameters.Add("@PasswordHash", user.PasswordHash);
-
             return await connection.ExecuteAsync(
                 "AddUser",
-                parameters,
+                new
+                {
+                    Username = user.Username,
+                    Email = user.Email,
+                    PasswordHash = user.PasswordHash
+                },
                 commandType: CommandType.StoredProcedure);
         }
     }

@@ -8,8 +8,17 @@ namespace CommonLayer.Common
         public static string HashPassword(string password)
         {
             using var sha256 = SHA256.Create();
-            var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-            return Convert.ToBase64String(bytes);
+            byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+            StringBuilder builder = new StringBuilder();
+            foreach (var b in bytes)
+                builder.Append(b.ToString("x2"));
+            return builder.ToString();
+        }
+
+        public static bool VerifyPassword(string enteredPassword, string storedHash)
+        {
+            string enteredHash = HashPassword(enteredPassword);
+            return enteredHash == storedHash;
         }
     }
 }
