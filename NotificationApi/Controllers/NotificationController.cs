@@ -1,6 +1,7 @@
 using BusinessLayer;
 using CommonLayer.Models;
 using Microsoft.AspNetCore.Mvc;
+using NotificationApi.Services;
 
 namespace NotificationApi.Controllers
 {
@@ -9,10 +10,12 @@ namespace NotificationApi.Controllers
     public class NotificationController : ControllerBase
     {
         private readonly IBusinessHandler _businessHandler;
+        private readonly JwtService _jwtService;
 
-        public NotificationController(IBusinessHandler businessHandler)
+        public NotificationController(IBusinessHandler businessHandler, JwtService jwtService)
         {
             _businessHandler = businessHandler;
+            _jwtService = jwtService;
         }
 
         [HttpPost("register")]
@@ -32,11 +35,17 @@ namespace NotificationApi.Controllers
             if (user == null)
                 return Unauthorized("Invalid credentials.");
 
+            var token = _jwtService.GenerateToken(user);
+
             return Ok(new
             {
-                user.Id,
-                user.Username,
-                user.Email
+                token,
+                user = new
+                {
+                    user.Id,
+                    user.Username,
+                    user.Email
+                }
             });
         }
     }
