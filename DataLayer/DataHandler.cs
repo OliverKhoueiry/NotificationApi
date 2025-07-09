@@ -1,6 +1,7 @@
 ﻿using CommonLayer.Models;
 using Dapper;
 using Microsoft.Extensions.Configuration;
+using System.Data;
 using System.Data.SqlClient;
 
 namespace DataLayer
@@ -17,16 +18,27 @@ namespace DataLayer
         public async Task<User?> GetUserByEmailAsync(string email)
         {
             using var connection = new SqlConnection(_connectionString);
-            var sql = "SELECT * FROM Users WHERE Email = @Email";
-            return await connection.QueryFirstOrDefaultAsync<User>(sql, new { Email = email });
+            var parameters = new DynamicParameters();
+            parameters.Add("@Email", email);
+
+            return await connection.QueryFirstOrDefaultAsync<User>(
+                "GetUserByEmail",
+                parameters,
+                commandType: CommandType.StoredProcedure);
         }
 
         public async Task<int> AddUserAsync(User user)
         {
             using var connection = new SqlConnection(_connectionString);
-            var sql = @"INSERT INTO Users (Username, Email, PasswordHash, CreatedAt)
-                        VALUES (@Username, @Email, @PasswordHash, GETDATE())";
-            return await connection.ExecuteAsync(sql, user);
+            var parameters = new DynamicParameters();
+            parameters.Add("@Username", user.Username);
+            parameters.Add("@Email", user.Email);
+            parameters.Add("@PasswordHash", user.PasswordHash);
+
+            return await connection.ExecuteAsync(
+                "AddUser",
+                parameters,
+                commandType: CommandType.StoredProcedure);
         }
     }
 }
