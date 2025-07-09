@@ -39,6 +39,7 @@ namespace BusinessLayer
             if (user == null)
                 return null;
 
+
             var hashed = PasswordHasher.HashPassword(request.Password);
             return user.PasswordHash == hashed ? user : null;
         }
