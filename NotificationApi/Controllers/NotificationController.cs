@@ -1,8 +1,8 @@
-using BusinessLayer;
-using CommonLayer.Common;
-using CommonLayer.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using CommonLayer.Models;
+using BusinessLayer;
+using System.Threading.Tasks;
+using CommonLayer.Common;
 
 namespace NotificationApi.Controllers
 {
@@ -18,51 +18,52 @@ namespace NotificationApi.Controllers
         }
 
         [HttpPost("register")]
-        [AllowAnonymous]
         public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var result = await _businessHandler.RegisterAsync(request);
-            return result.Code == ResponseMessages.SuccessCode ? Ok(result) : BadRequest(result);
+            return Ok(result);
         }
 
         [HttpPost("login")]
-        [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
-            var (response, accessToken, refreshToken) = await _businessHandler.LoginAsync(request);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
+            var (response, accessToken, refreshToken) = await _businessHandler.LoginAsync(request);
             if (response.Code != ResponseMessages.SuccessCode)
                 return Unauthorized(response);
 
             return Ok(new
             {
-                response.Code,
                 response.Description,
                 AccessToken = accessToken,
                 RefreshToken = refreshToken
             });
         }
 
-        [HttpPost("forgetpassword")]
-        [AllowAnonymous]
-        public async Task<IActionResult> ForgetPassword([FromBody] string email)
+        [HttpPost("forget-password")]
+        public async Task<IActionResult> ForgetPassword([FromBody] ForgetPasswordRequest request)
         {
-            var result = await _businessHandler.ForgetPasswordAsync(email);
-            return result.Code == ResponseMessages.SuccessCode ? Ok(result) : BadRequest(result);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var response = await _businessHandler.ForgetPasswordAsync(request.Email);
+            return Ok(response);
         }
 
-        [HttpPost("refreshtoken")]
-        [AllowAnonymous]
-        public async Task<IActionResult> RefreshToken([FromBody] string refreshToken)
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
         {
-            var (response, newAccessToken, newRefreshToken) = await _businessHandler.RefreshTokenAsync(refreshToken);
-
+            var (response, newAccessToken, newRefreshToken) = await _businessHandler.RefreshTokenAsync(request.RefreshToken);
             if (response.Code != ResponseMessages.SuccessCode)
                 return Unauthorized(response);
 
             return Ok(new
             {
-                response.Code,
                 response.Description,
                 AccessToken = newAccessToken,
                 RefreshToken = newRefreshToken

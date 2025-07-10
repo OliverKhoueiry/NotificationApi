@@ -26,7 +26,7 @@
             new ApiResponse(SuccessCode, "Login successful.");
 
         public static readonly ApiResponse InvalidRefreshToken =
-            new ApiResponse(ErrorCode, "Invalid or expired refresh token.");
+            new ApiResponse(ErrorCode, "Invalid or expired refresh token."); 
 
         public static readonly ApiResponse RefreshTokenSuccessful =
             new ApiResponse(SuccessCode, "New access token generated successfully.");
