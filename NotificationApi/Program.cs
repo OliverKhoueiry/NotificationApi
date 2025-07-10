@@ -1,23 +1,23 @@
 ﻿using BusinessLayer;
+using CommonLayer.Common;
+//using CommonLayer.Services;
 using DataLayer;
-using NotificationApi.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using CommonLayer.Common;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Add services to the container
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Dependency Injection
+// DI
 builder.Services.AddScoped<IDataHandler, DataHandler>();
 builder.Services.AddScoped<IBusinessHandler, BusinessHandler>();
-builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<JwtService>();
+builder.Services.AddScoped<EmailService>();
 
 // JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
@@ -36,23 +36,22 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         ValidIssuer = jwtSettings["Issuer"],
         ValidAudience = jwtSettings["Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(jwtSettings["SecretKey"])) // FIXED HERE
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]))
     };
 });
 
-// CORS (allow frontend apps)
+// CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll",
-        policy => policy.AllowAnyOrigin()
-                        .AllowAnyMethod()
-                        .AllowAnyHeader());
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+    });
 });
 
 var app = builder.Build();
 
-// Configure HTTP pipeline
+// Middleware
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -63,5 +62,6 @@ app.UseHttpsRedirection();
 app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
 app.Run();

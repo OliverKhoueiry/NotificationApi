@@ -1,8 +1,8 @@
 using BusinessLayer;
 using CommonLayer.Common;
 using CommonLayer.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using NotificationApi.Services;
 
 namespace NotificationApi.Controllers
 {
@@ -11,52 +11,62 @@ namespace NotificationApi.Controllers
     public class NotificationController : ControllerBase
     {
         private readonly IBusinessHandler _businessHandler;
-        private readonly JwtService _jwtService;
 
-        public NotificationController(IBusinessHandler businessHandler, JwtService jwtService)
+        public NotificationController(IBusinessHandler businessHandler)
         {
             _businessHandler = businessHandler;
-            _jwtService = jwtService;
         }
 
         [HttpPost("register")]
+        [AllowAnonymous]
         public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
             var result = await _businessHandler.RegisterAsync(request);
-
-            if (result.Code == ResponseMessages.SuccessCode)
-                return Ok(result);
-
-            return BadRequest(result);
+            return result.Code == ResponseMessages.SuccessCode ? Ok(result) : BadRequest(result);
         }
 
         [HttpPost("login")]
+        [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
-            var (result, user) = await _businessHandler.LoginAsync(request);
+            var (response, accessToken, refreshToken) = await _businessHandler.LoginAsync(request);
 
-            if (result.Code != ResponseMessages.SuccessCode || user == null)
-                return Ok(result);
-
-            var token = _jwtService.GenerateToken(user);
+            if (response.Code != ResponseMessages.SuccessCode)
+                return Unauthorized(response);
 
             return Ok(new
             {
-                result.Code,
-                result.Description,
-                token
+                response.Code,
+                response.Description,
+                AccessToken = accessToken,
+                RefreshToken = refreshToken
             });
         }
 
         [HttpPost("forgetpassword")]
+        [AllowAnonymous]
         public async Task<IActionResult> ForgetPassword([FromBody] string email)
         {
             var result = await _businessHandler.ForgetPasswordAsync(email);
+            return result.Code == ResponseMessages.SuccessCode ? Ok(result) : BadRequest(result);
+        }
 
-            if (result.Code == ResponseMessages.SuccessCode)
-                return Ok(result);
+        [HttpPost("refreshtoken")]
+        [AllowAnonymous]
+        public async Task<IActionResult> RefreshToken([FromBody] string refreshToken)
+        {
+            var (response, newAccessToken, newRefreshToken) = await _businessHandler.RefreshTokenAsync(refreshToken);
 
-            return BadRequest(result);
+            if (response.Code != ResponseMessages.SuccessCode)
+                return Unauthorized(response);
+
+            return Ok(new
+            {
+                response.Code,
+                response.Description,
+                AccessToken = newAccessToken,
+                RefreshToken = newRefreshToken
+            });
         }
     }
 }

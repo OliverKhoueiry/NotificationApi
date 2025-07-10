@@ -6,7 +6,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace NotificationApi.Services
+namespace CommonLayer.Common
 {
     public class JwtService
     {
@@ -18,18 +18,13 @@ namespace NotificationApi.Services
         public JwtService(IConfiguration config)
         {
             var jwtSettings = config.GetSection("JwtSettings");
-
-            _secretKey = jwtSettings["SecretKey"] ?? throw new ArgumentNullException("JwtSettings:SecretKey missing");
-            _issuer = jwtSettings["Issuer"] ?? throw new ArgumentNullException("JwtSettings:Issuer missing");
-            _audience = jwtSettings["Audience"] ?? throw new ArgumentNullException("JwtSettings:Audience missing");
-
-            if (!int.TryParse(jwtSettings["ExpiryMinutes"], out _expiryMinutes))
-            {
-                _expiryMinutes = 60;
-            }
+            _secretKey = jwtSettings["SecretKey"] ?? throw new ArgumentNullException("SecretKey");
+            _issuer = jwtSettings["Issuer"] ?? throw new ArgumentNullException("Issuer");
+            _audience = jwtSettings["Audience"] ?? throw new ArgumentNullException("Audience");
+            _expiryMinutes = int.Parse(jwtSettings["ExpiryMinutes"] ?? "60");
         }
 
-        public string GenerateToken(User user)
+        public string GenerateAccessToken(User user)
         {
             var claims = new[]
             {
@@ -47,10 +42,14 @@ namespace NotificationApi.Services
                 audience: _audience,
                 claims: claims,
                 expires: DateTime.UtcNow.AddMinutes(_expiryMinutes),
-                signingCredentials: creds
-            );
+                signingCredentials: creds);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        public string GenerateRefreshToken()
+        {
+            return Convert.ToBase64String(Guid.NewGuid().ToByteArray());
         }
     }
 }
