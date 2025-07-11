@@ -13,6 +13,8 @@ namespace DataLayer
         Task UpdateUserPasswordAsync(int userId, string hashedPassword);
         Task ClearResetTokenAsync(int userId);
         Task<int> UpdatePasswordAsync(int userId, string newHashedPassword);
+        Task ClearRefreshTokenAsync(int userId);
+
 
     }
 }

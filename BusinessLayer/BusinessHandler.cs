@@ -67,7 +67,7 @@ namespace BusinessLayer
             DateTime expiry = DateTime.UtcNow.AddMinutes(15);
             await _dataHandler.SaveResetTokenAsync(user.Id, resetToken, expiry);
 
-            string resetLink = $"https://localhoset:3000/ResetPassword?token={resetToken}";
+            string resetLink = $"https://localhost:3000/ResetPassword?token={resetToken}";
             string subject = "Password Reset Request";
             string body = $@"
                 <p>Hello {user.Username},</p>
@@ -109,5 +109,16 @@ namespace BusinessLayer
 
             return (ResponseMessages.RefreshTokenSuccessful, newAccessToken, newRefreshToken);
         }
+
+        public async Task<ApiResponse> LogoutAsync(string refreshToken)
+        {
+            var user = await _dataHandler.GetUserByRefreshTokenAsync(refreshToken);
+            if (user == null)
+                return new ApiResponse(ResponseMessages.ErrorCode, "Invalid refresh token.");
+
+            await _dataHandler.ClearRefreshTokenAsync(user.Id);
+            return new ApiResponse(ResponseMessages.SuccessCode, "Logout successful.");
+        }
+
     }
 }

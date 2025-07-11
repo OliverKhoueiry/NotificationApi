@@ -112,5 +112,14 @@ namespace DataLayer
         {
             throw new NotImplementedException();
         }
+        public async Task ClearRefreshTokenAsync(int userId)
+        {
+            using var connection = new SqlConnection(_connectionString);
+            await connection.ExecuteAsync(
+                "ClearRefreshToken", // Your stored procedure name
+                new { UserId = userId },
+                commandType: CommandType.StoredProcedure);
+        }
+
     }
 }

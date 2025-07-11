@@ -69,6 +69,7 @@ namespace NotificationApi.Controllers
                 RefreshToken = newRefreshToken
             });
         }
+
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
         {
@@ -76,6 +77,16 @@ namespace NotificationApi.Controllers
                 return BadRequest(ModelState);
 
             var response = await _businessHandler.ResetPasswordAsync(request);
+            return Ok(response);
+        }
+
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout([FromBody] LogoutRequest request)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var response = await _businessHandler.LogoutAsync(request.RefreshToken);
             return Ok(response);
         }
 

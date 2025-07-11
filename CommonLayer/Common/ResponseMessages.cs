@@ -35,6 +35,8 @@
             new ApiResponse(SuccessCode, "New access token generated successfully.");
         public static readonly ApiResponse PasswordResetSuccessful =
             new ApiResponse(SuccessCode, "Password reset successfully.");
+        public static ApiResponse LogoutSuccessful = new ApiResponse(SuccessCode, "Logout successful.");
+
 
     }
 
