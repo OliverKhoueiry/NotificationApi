@@ -9,7 +9,6 @@ namespace BusinessLayer
         Task<(ApiResponse, string?, string?)> LoginAsync(LoginRequest request);
         Task<ApiResponse> ForgetPasswordAsync(string email);
         Task<(ApiResponse, string?, string?)> RefreshTokenAsync(string refreshToken);
-        Task<ApiResponse> ResetPasswordAsync(string token, string newPassword);
-
+        Task<ApiResponse> ResetPasswordAsync(ResetPasswordRequest request);
     }
 }

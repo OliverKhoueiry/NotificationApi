@@ -75,7 +75,7 @@ namespace NotificationApi.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var response = await _businessHandler.ResetPasswordAsync(request.Token, request.NewPassword);
+            var response = await _businessHandler.ResetPasswordAsync(request);
             return Ok(response);
         }
 

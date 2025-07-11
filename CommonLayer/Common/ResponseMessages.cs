@@ -33,6 +33,9 @@
 
         public static readonly ApiResponse RefreshTokenSuccessful =
             new ApiResponse(SuccessCode, "New access token generated successfully.");
+        public static readonly ApiResponse PasswordResetSuccessful =
+            new ApiResponse(SuccessCode, "Password reset successfully.");
+
     }
 
     public record ApiResponse(int Code, string Description);

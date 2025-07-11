@@ -15,9 +15,14 @@ namespace DataLayer
             _connectionString = config.GetConnectionString("DefaultConnection");
         }
 
+        private SqlConnection GetConnection()
+        {
+            return new SqlConnection(_connectionString);
+        }
+
         public async Task<User?> GetUserByEmailAsync(string email)
         {
-            using var connection = new SqlConnection(_connectionString);
+            using var connection = GetConnection();
             return await connection.QueryFirstOrDefaultAsync<User>(
                 "GetUserByEmail",
                 new { Email = email },
@@ -26,7 +31,7 @@ namespace DataLayer
 
         public async Task<User?> GetUserByRefreshTokenAsync(string refreshToken)
         {
-            using var connection = new SqlConnection(_connectionString);
+            using var connection = GetConnection();
             return await connection.QueryFirstOrDefaultAsync<User>(
                 "GetUserByRefreshToken",
                 new { RefreshToken = refreshToken },
@@ -35,7 +40,7 @@ namespace DataLayer
 
         public async Task<int> AddUserAsync(User user)
         {
-            using var connection = new SqlConnection(_connectionString);
+            using var connection = GetConnection();
             return await connection.ExecuteAsync(
                 "AddUser",
                 new
@@ -43,15 +48,15 @@ namespace DataLayer
                     Username = user.Username,
                     Email = user.Email,
                     PasswordHash = user.PasswordHash,
-                    RefreshToken = user.RefreshToken,                // can be null at registration
-                    RefreshTokenExpiry = user.RefreshTokenExpiry     // can be null at registration
+                    RefreshToken = user.RefreshToken,
+                    RefreshTokenExpiry = user.RefreshTokenExpiry
                 },
                 commandType: CommandType.StoredProcedure);
         }
 
         public async Task UpdateRefreshTokenAsync(int userId, string refreshToken, DateTime refreshTokenExpiry)
         {
-            using var connection = new SqlConnection(_connectionString);
+            using var connection = GetConnection();
             await connection.ExecuteAsync(
                 "UpdateRefreshToken",
                 new
@@ -62,9 +67,10 @@ namespace DataLayer
                 },
                 commandType: CommandType.StoredProcedure);
         }
+
         public async Task SaveResetTokenAsync(int userId, string token, DateTime expiry)
         {
-            using var connection = new SqlConnection(_connectionString);
+            using var connection = GetConnection();
             await connection.ExecuteAsync(
                 "SaveResetToken",
                 new { UserId = userId, Token = token, Expiry = expiry },
@@ -73,30 +79,38 @@ namespace DataLayer
 
         public async Task<User?> GetUserByResetTokenAsync(string token)
         {
-            using var connection = new SqlConnection(_connectionString);
+            using var connection = GetConnection();
             return await connection.QueryFirstOrDefaultAsync<User>(
                 "GetUserByResetToken",
                 new { ResetToken = token },
                 commandType: CommandType.StoredProcedure);
         }
 
-        public async Task UpdateUserPasswordAsync(int userId, string hashedPassword)
+        public async Task<int> UpdatePasswordAsync(int userId, string newHashedPassword)
         {
-            using var connection = new SqlConnection(_connectionString);
-            await connection.ExecuteAsync(
+            using var connection = GetConnection();
+            return await connection.ExecuteAsync(
                 "UpdateUserPassword",
-                new { UserId = userId, PasswordHash = hashedPassword },
+                new
+                {
+                    UserId = userId,
+                    PasswordHash = newHashedPassword
+                },
                 commandType: CommandType.StoredProcedure);
         }
 
         public async Task ClearResetTokenAsync(int userId)
         {
-            using var connection = new SqlConnection(_connectionString);
+            using var connection = GetConnection();
             await connection.ExecuteAsync(
                 "ClearResetToken",
                 new { UserId = userId },
                 commandType: CommandType.StoredProcedure);
         }
 
+        public Task UpdateUserPasswordAsync(int userId, string hashedPassword)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -61,7 +61,7 @@ namespace BusinessLayer
         {
             var user = await _dataHandler.GetUserByEmailAsync(email);
             if (user == null)
-                return ResponseMessages.UserNotFound; // Do not reveal user existence
+                return ResponseMessages.UserNotFound;
 
             string resetToken = Guid.NewGuid().ToString();
             DateTime expiry = DateTime.UtcNow.AddMinutes(15);
@@ -71,7 +71,7 @@ namespace BusinessLayer
             string subject = "Password Reset Request";
             string body = $@"
                 <p>Hello {user.Username},</p>
-                <p>Click below to reset your password (valid for 15 minutes):</p>
+                <p>Click below to reset your password (valid for 15 minutes):</p> 
                 <a href='{resetLink}'>Reset Password</a>";
 
             await _emailService.SendEmailAsync(email, subject, body);
@@ -79,17 +79,20 @@ namespace BusinessLayer
             return ResponseMessages.ForgetPasswordEmailSent;
         }
 
-        public async Task<ApiResponse> ResetPasswordAsync(string token, string newPassword)
+        public async Task<ApiResponse> ResetPasswordAsync(ResetPasswordRequest request)
         {
-            var user = await _dataHandler.GetUserByResetTokenAsync(token);
+            var user = await _dataHandler.GetUserByResetTokenAsync(request.Token);
             if (user == null || user.ResetTokenExpiry < DateTime.UtcNow)
                 return new ApiResponse(ResponseMessages.ErrorCode, "Invalid or expired reset token.");
 
-            string hashedPassword = PasswordHasher.HashPassword(newPassword);
-            await _dataHandler.UpdateUserPasswordAsync(user.Id, hashedPassword);
+            if (request.NewPassword != request.ConfirmNewPassword)
+                return new ApiResponse(ResponseMessages.ValidationErrorCode, "Passwords do not match.");
+
+            string hashedPassword = PasswordHasher.HashPassword(request.NewPassword);
+            await _dataHandler.UpdatePasswordAsync(user.Id, hashedPassword);
             await _dataHandler.ClearResetTokenAsync(user.Id);
 
-            return new ApiResponse(ResponseMessages.SuccessCode, "Password has been reset successfully.");
+            return new ApiResponse(ResponseMessages.SuccessCode, "Password reset successful.");
         }
 
         public async Task<(ApiResponse, string?, string?)> RefreshTokenAsync(string refreshToken)
