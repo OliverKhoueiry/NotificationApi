@@ -37,7 +37,21 @@ namespace BusinessLayer
 
             var rowsAffected = await _dataHandler.AddUserAsync(user);
             if (rowsAffected > 0)
+            {
+                // ✅ Send welcome email
+                string subject = "Welcome to Our Service!";
+                string body = $@"
+                    <p>Hello {user.Username},</p>
+                    <p>Thank you for registering with us. We're excited to have you onboard!</p>
+                    <p>You can now login and start using all of our features.</p>
+                    <br/>
+                    <p>Cheers,<br/>The Team</p>
+                ";
+
+                await _emailService.SendEmailAsync(user.Email, subject, body);
+
                 return ResponseMessages.RegistrationSuccessful;
+            }
 
             return new ApiResponse(ResponseMessages.ErrorCode, "Registration failed.");
         }
@@ -119,6 +133,5 @@ namespace BusinessLayer
             await _dataHandler.ClearRefreshTokenAsync(user.Id);
             return new ApiResponse(ResponseMessages.SuccessCode, "Logout successful.");
         }
-
     }
 }

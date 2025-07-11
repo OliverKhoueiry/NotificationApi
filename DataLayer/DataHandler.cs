@@ -116,7 +116,7 @@ namespace DataLayer
         {
             using var connection = new SqlConnection(_connectionString);
             await connection.ExecuteAsync(
-                "ClearRefreshToken", // Your stored procedure name
+                "ClearRefreshToken", 
                 new { UserId = userId },
                 commandType: CommandType.StoredProcedure);
         }
