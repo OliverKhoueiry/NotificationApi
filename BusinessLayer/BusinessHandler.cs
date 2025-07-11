@@ -61,7 +61,7 @@ namespace BusinessLayer
         {
             var user = await _dataHandler.GetUserByEmailAsync(email);
             if (user == null)
-                return ResponseMessages.ForgetPasswordEmailSent; // Do not reveal user existence
+                return ResponseMessages.UserNotFound; // Do not reveal user existence
 
             string resetToken = Guid.NewGuid().ToString();
             DateTime expiry = DateTime.UtcNow.AddMinutes(15);

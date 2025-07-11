@@ -22,11 +22,14 @@
         public static readonly ApiResponse ForgetPasswordEmailSent =
             new ApiResponse(SuccessCode, "Password reset email sent.");
 
+        public static readonly ApiResponse UserNotFound =
+            new ApiResponse(ErrorCode, "This email is not registered."); 
+
         public static readonly ApiResponse LoginSuccessful =
             new ApiResponse(SuccessCode, "Login successful.");
 
         public static readonly ApiResponse InvalidRefreshToken =
-            new ApiResponse(ErrorCode, "Invalid or expired refresh token."); 
+            new ApiResponse(ErrorCode, "Invalid or expired refresh token.");
 
         public static readonly ApiResponse RefreshTokenSuccessful =
             new ApiResponse(SuccessCode, "New access token generated successfully.");
