@@ -62,5 +62,41 @@ namespace DataLayer
                 },
                 commandType: CommandType.StoredProcedure);
         }
+        public async Task SaveResetTokenAsync(int userId, string token, DateTime expiry)
+        {
+            using var connection = new SqlConnection(_connectionString);
+            await connection.ExecuteAsync(
+                "SaveResetToken",
+                new { UserId = userId, Token = token, Expiry = expiry },
+                commandType: CommandType.StoredProcedure);
+        }
+
+        public async Task<User?> GetUserByResetTokenAsync(string token)
+        {
+            using var connection = new SqlConnection(_connectionString);
+            return await connection.QueryFirstOrDefaultAsync<User>(
+                "GetUserByResetToken",
+                new { ResetToken = token },
+                commandType: CommandType.StoredProcedure);
+        }
+
+        public async Task UpdateUserPasswordAsync(int userId, string hashedPassword)
+        {
+            using var connection = new SqlConnection(_connectionString);
+            await connection.ExecuteAsync(
+                "UpdateUserPassword",
+                new { UserId = userId, PasswordHash = hashedPassword },
+                commandType: CommandType.StoredProcedure);
+        }
+
+        public async Task ClearResetTokenAsync(int userId)
+        {
+            using var connection = new SqlConnection(_connectionString);
+            await connection.ExecuteAsync(
+                "ClearResetToken",
+                new { UserId = userId },
+                commandType: CommandType.StoredProcedure);
+        }
+
     }
 }

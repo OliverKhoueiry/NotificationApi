@@ -69,5 +69,15 @@ namespace NotificationApi.Controllers
                 RefreshToken = newRefreshToken
             });
         }
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var response = await _businessHandler.ResetPasswordAsync(request.Token, request.NewPassword);
+            return Ok(response);
+        }
+
     }
 }

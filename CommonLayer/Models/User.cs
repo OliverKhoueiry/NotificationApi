@@ -6,5 +6,7 @@
     public string PasswordHash { get; set; }
     public string? RefreshToken { get; set; }
     public DateTime? RefreshTokenExpiry { get; set; }
+    public string? ResetToken { get; set; }
+    public DateTime? ResetTokenExpiry { get; set; }
     public DateTime CreatedAt { get; set; }
 }
