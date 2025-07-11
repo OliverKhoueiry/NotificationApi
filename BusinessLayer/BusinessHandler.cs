@@ -67,7 +67,7 @@ namespace BusinessLayer
             DateTime expiry = DateTime.UtcNow.AddMinutes(15);
             await _dataHandler.SaveResetTokenAsync(user.Id, resetToken, expiry);
 
-            string resetLink = $"https://yourfrontend.com/reset-password?token={resetToken}";
+            string resetLink = $"https://localhoset:3000/ResetPassword?token={resetToken}";
             string subject = "Password Reset Request";
             string body = $@"
                 <p>Hello {user.Username},</p>
