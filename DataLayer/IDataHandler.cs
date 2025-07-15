@@ -34,6 +34,7 @@ namespace DataLayer
 
         Task<int> AddCategoryAsync(CourseCategory category);
 
+        Task<int> DeleteCategoryAsync(int categoryId);
 
     }
 }

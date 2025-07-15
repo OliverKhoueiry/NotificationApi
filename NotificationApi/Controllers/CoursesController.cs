@@ -62,4 +62,11 @@ public class CoursesController : ControllerBase
         return Ok(result);
     }
 
+    [HttpDelete("DeleteCategory/{id}")]
+    public async Task<IActionResult> DeleteCategory(int id)
+    {
+        var result = await _businessHandler.DeleteCategoryAsync(id);
+        return Ok(result);
+    }
+
 }

@@ -262,6 +262,14 @@ namespace DataLayer
                 commandType: CommandType.StoredProcedure);
         }
 
+        public async Task<int> DeleteCategoryAsync(int categoryId)
+        {
+            using var connection = GetConnection();
+            return await connection.ExecuteAsync(
+                "DeleteCategory",
+                new { Id = categoryId },
+                commandType: CommandType.StoredProcedure);
+        }
 
 
 

@@ -31,5 +31,8 @@ namespace BusinessLayer
 
         Task<ApiResponse> AddCategoryAsync(CourseCategory category);
 
+        Task<ApiResponse> DeleteCategoryAsync(int categoryId);
+
+
     }
 }

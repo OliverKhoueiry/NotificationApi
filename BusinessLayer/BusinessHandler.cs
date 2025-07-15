@@ -217,9 +217,15 @@ namespace BusinessLayer
                 : new ApiResponse(ResponseMessages.ErrorCode, "Failed to add category.");
         }
 
-        //Task<(ApiResponse, string?, string?)> IBusinessHandler.LoginAsync(LoginRequest request)
-        //{
-        //    throw new NotImplementedException();
-        //}
+        public async Task<ApiResponse> DeleteCategoryAsync(int categoryId)
+        {
+            var rowsAffected = await _dataHandler.DeleteCategoryAsync(categoryId);
+
+            if (rowsAffected > 0)
+                return new ApiResponse(ResponseMessages.SuccessCode, "Category deleted successfully.");
+
+            return new ApiResponse(ResponseMessages.ErrorCode, "Failed to delete category.");
+        }
+
     }
 }
