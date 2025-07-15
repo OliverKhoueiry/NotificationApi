@@ -33,7 +33,8 @@ namespace NotificationApi.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var (response, accessToken, refreshToken) = await _businessHandler.LoginAsync(request);
+            var (response, accessToken, refreshToken, role) = await _businessHandler.LoginAsync(request);
+
             if (response.Code != ResponseMessages.SuccessCode)
                 return Unauthorized(response);
 
@@ -41,9 +42,12 @@ namespace NotificationApi.Controllers
             {
                 response.Description,
                 AccessToken = accessToken,
-                RefreshToken = refreshToken
+                RefreshToken = refreshToken,
+                Role = role // <-- ADD this to return the role
             });
         }
+
+
 
         [HttpPost("forget-password")]
         public async Task<IActionResult> ForgetPassword([FromBody] ForgetPasswordRequest request)

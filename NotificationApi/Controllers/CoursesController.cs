@@ -30,7 +30,7 @@ public class CoursesController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPost("add")]
+    [HttpPost("AddCourses")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> AddCourse([FromBody] Course course)
     {
@@ -38,7 +38,7 @@ public class CoursesController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPut("update")]
+    [HttpPut("UpdateCourses")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> UpdateCourse([FromBody] Course course)
     {
@@ -46,11 +46,20 @@ public class CoursesController : ControllerBase
         return Ok(result);
     }
 
-    [HttpDelete("delete/{id}")]
+    [HttpDelete("DeleteCourses/{id}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteCourse(int id)
     {
         var result = await _businessHandler.DeleteCourseAsync(id);
         return Ok(result);
     }
+
+
+    [HttpPost("AddCategories")]
+    public async Task<IActionResult> AddCategories([FromBody] CourseCategory category)
+    {
+        var result = await _businessHandler.AddCategoryAsync(category);
+        return Ok(result);
+    }
+
 }

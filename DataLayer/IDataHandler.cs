@@ -32,6 +32,7 @@ namespace DataLayer
 
         Task<int> UpdateUserRoleAsync(int userId, string role);
 
+        Task<int> AddCategoryAsync(CourseCategory category);
 
 
     }

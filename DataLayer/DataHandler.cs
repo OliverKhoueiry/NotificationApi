@@ -253,6 +253,17 @@ namespace DataLayer
         }
 
 
+        public async Task<int> AddCategoryAsync(CourseCategory category)
+        {
+            using var connection = GetConnection();
+            return await connection.ExecuteAsync(
+                "AddCategory",
+                new { Name = category.Name },
+                commandType: CommandType.StoredProcedure);
+        }
+
+
+
 
     }
 }

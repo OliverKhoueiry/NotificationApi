@@ -56,11 +56,11 @@ namespace BusinessLayer
             return new ApiResponse(ResponseMessages.ErrorCode, "Registration failed.");
         }
 
-        public async Task<(ApiResponse, string?, string?)> LoginAsync(LoginRequest request)
+        public async Task<(ApiResponse, string?, string?, string?)> LoginAsync(LoginRequest request)
         {
             var user = await _dataHandler.GetUserByEmailAsync(request.Email);
             if (user == null || !PasswordHasher.VerifyPassword(request.Password, user.PasswordHash))
-                return (ResponseMessages.InvalidCredentials, null, null);
+                return (ResponseMessages.InvalidCredentials, null, null, null);
 
             string accessToken = _jwtService.GenerateAccessToken(user);
             string refreshToken = _jwtService.GenerateRefreshToken();
@@ -68,8 +68,10 @@ namespace BusinessLayer
 
             await _dataHandler.UpdateRefreshTokenAsync(user.Id, refreshToken, refreshTokenExpiry);
 
-            return (ResponseMessages.LoginSuccessful, accessToken, refreshToken);
+            return (ResponseMessages.LoginSuccessful, accessToken, refreshToken, user.Role);
         }
+
+
 
         public async Task<ApiResponse> ForgetPasswordAsync(string email)
         {
@@ -207,7 +209,17 @@ namespace BusinessLayer
         }
 
 
+        public async Task<ApiResponse> AddCategoryAsync(CourseCategory category)
+        {
+            var rowsAffected = await _dataHandler.AddCategoryAsync(category);
+            return rowsAffected > 0
+                ? new ApiResponse(ResponseMessages.SuccessCode, "Category added successfully.")
+                : new ApiResponse(ResponseMessages.ErrorCode, "Failed to add category.");
+        }
 
-
+        //Task<(ApiResponse, string?, string?)> IBusinessHandler.LoginAsync(LoginRequest request)
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 }
