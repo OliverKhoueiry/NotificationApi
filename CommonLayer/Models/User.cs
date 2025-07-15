@@ -9,4 +9,5 @@
     public string? ResetToken { get; set; }
     public DateTime? ResetTokenExpiry { get; set; }
     public DateTime CreatedAt { get; set; }
+    public string Role { get; set; } = "User"; // Default role
 }

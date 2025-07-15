@@ -133,5 +133,81 @@ namespace BusinessLayer
             await _dataHandler.ClearRefreshTokenAsync(user.Id);
             return new ApiResponse(ResponseMessages.SuccessCode, "Logout successful.");
         }
+
+
+        public async Task<IEnumerable<CourseCategory>> GetAllCategoriesAsync()
+        {
+            return await _dataHandler.GetAllCategoriesAsync();
+        }
+
+        public async Task<IEnumerable<Course>> GetCoursesByCategoryAsync(int categoryId)
+        {
+            return await _dataHandler.GetCoursesByCategoryAsync(categoryId);
+        }
+
+        public async Task<ApiResponse> AddCourseAsync(Course course)
+        {
+            var rowsAffected = await _dataHandler.AddCourseAsync(course);
+            if (rowsAffected > 0)
+                return ResponseMessages.AddCourseSuccessful;
+
+            return ResponseMessages.AddCourseFailed;
+        }
+
+        public async Task<ApiResponse> UpdateCourseAsync(Course course)
+        {
+            var rowsAffected = await _dataHandler.UpdateCourseAsync(course);
+            if (rowsAffected > 0)
+                return ResponseMessages.UpdateCourseSuccessful;
+
+            return ResponseMessages.UpdateCourseFailed;
+        }
+
+        public async Task<ApiResponse> DeleteCourseAsync(int courseId)
+        {
+            var rowsAffected = await _dataHandler.DeleteCourseAsync(courseId);
+
+            if (rowsAffected >= 1)
+            {
+                return ResponseMessages.CourseDeleted;
+            }
+
+            // Return failed only if no rows affected
+            return ResponseMessages.CourseDeleteFailed;
+        }
+
+
+        public async Task<ApiResponse> AddReviewAsync(Review review)
+        {
+            var rowsAffected = await _dataHandler.AddReviewAsync(review);
+            return rowsAffected > 0
+                ? new ApiResponse(ResponseMessages.SuccessCode, "Review added successfully.")
+                : new ApiResponse(ResponseMessages.ErrorCode, "Failed to add review.");
+        }
+
+        public async Task<IEnumerable<Review>> GetReviewsByCourseAsync(int courseId)
+        {
+            return await _dataHandler.GetReviewsByCourseAsync(courseId);
+        }
+
+        public async Task<ApiResponse> DeleteReviewAsync(int reviewId)
+        {
+            var rowsAffected = await _dataHandler.DeleteReviewAsync(reviewId);
+            return rowsAffected > 0
+                ? new ApiResponse(ResponseMessages.SuccessCode, "Review deleted successfully.")
+                : new ApiResponse(ResponseMessages.ErrorCode, "Failed to delete review.");
+        }
+
+        public async Task<ApiResponse> PromoteUserToAdminAsync(int userId)
+        {
+            var rowsAffected = await _dataHandler.UpdateUserRoleAsync(userId, "Admin");
+            return rowsAffected > 0
+                ? new ApiResponse(ResponseMessages.SuccessCode, "User promoted to Admin.")
+                : new ApiResponse(ResponseMessages.ErrorCode, "Failed to promote user.");
+        }
+
+
+
+
     }
 }

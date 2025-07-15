@@ -16,5 +16,23 @@ namespace DataLayer
         Task ClearRefreshTokenAsync(int userId);
 
 
+
+
+        Task<IEnumerable<CourseCategory>> GetAllCategoriesAsync();
+        Task<IEnumerable<Course>> GetCoursesByCategoryAsync(int categoryId);
+        Task<int> AddCourseAsync(Course course);
+        Task<int> UpdateCourseAsync(Course course);
+        Task<int> DeleteCourseAsync(int courseId);
+
+
+
+        Task<int> AddReviewAsync(Review review);
+        Task<IEnumerable<Review>> GetReviewsByCourseAsync(int courseId);
+        Task<int> DeleteReviewAsync(int reviewId);
+
+        Task<int> UpdateUserRoleAsync(int userId, string role);
+
+
+
     }
 }

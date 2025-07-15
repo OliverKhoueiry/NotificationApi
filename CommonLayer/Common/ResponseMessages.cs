@@ -23,7 +23,7 @@
             new ApiResponse(SuccessCode, "Password reset email sent.");
 
         public static readonly ApiResponse UserNotFound =
-            new ApiResponse(ErrorCode, "This email is not registered."); 
+            new ApiResponse(ErrorCode, "This email is not registered.");
 
         public static readonly ApiResponse LoginSuccessful =
             new ApiResponse(SuccessCode, "Login successful.");
@@ -33,11 +33,31 @@
 
         public static readonly ApiResponse RefreshTokenSuccessful =
             new ApiResponse(SuccessCode, "New access token generated successfully.");
+
         public static readonly ApiResponse PasswordResetSuccessful =
             new ApiResponse(SuccessCode, "Password reset successfully.");
-        public static ApiResponse LogoutSuccessful = new ApiResponse(SuccessCode, "Logout successful.");
 
+        public static readonly ApiResponse LogoutSuccessful =
+            new ApiResponse(SuccessCode, "Logout successful.");
 
+        //  Course-related responses
+        public static readonly ApiResponse AddCourseSuccessful =
+            new ApiResponse(SuccessCode, "Course added successfully.");
+
+        public static readonly ApiResponse AddCourseFailed =
+            new ApiResponse(ErrorCode, "Failed to add course.");
+
+        public static readonly ApiResponse UpdateCourseSuccessful =
+            new ApiResponse(SuccessCode, "Course updated successfully.");
+
+        public static readonly ApiResponse UpdateCourseFailed =
+            new ApiResponse(ErrorCode, "Failed to update course.");
+
+        public static readonly ApiResponse CourseDeleted =
+            new ApiResponse(SuccessCode, "Course deleted successfully.");
+
+        public static readonly ApiResponse CourseDeleteFailed =
+            new ApiResponse(ErrorCode, "Failed to delete course.");
     }
 
     public record ApiResponse(int Code, string Description);

@@ -48,11 +48,14 @@ namespace DataLayer
                     Username = user.Username,
                     Email = user.Email,
                     PasswordHash = user.PasswordHash,
+                    Role = user.Role,                        // 👈 Add this
                     RefreshToken = user.RefreshToken,
-                    RefreshTokenExpiry = user.RefreshTokenExpiry
+                    RefreshTokenExpiry = user.RefreshTokenExpiry,
+                    CreatedAt = user.CreatedAt               // 👈 Add this
                 },
                 commandType: CommandType.StoredProcedure);
         }
+
 
         public async Task UpdateRefreshTokenAsync(int userId, string refreshToken, DateTime refreshTokenExpiry)
         {
@@ -120,6 +123,136 @@ namespace DataLayer
                 new { UserId = userId },
                 commandType: CommandType.StoredProcedure);
         }
+
+
+        public async Task<IEnumerable<CourseCategory>> GetAllCategoriesAsync()
+        {
+            using var connection = GetConnection();
+            return await connection.QueryAsync<CourseCategory>(
+                "GetAllCategoriesWithCourseCount",
+                commandType: CommandType.StoredProcedure);
+        }
+
+        public async Task<IEnumerable<Course>> GetCoursesByCategoryAsync(int categoryId)
+        {
+            using var connection = GetConnection();
+            return await connection.QueryAsync<Course>(
+                "GetCoursesByCategory",
+                new { CategoryId = categoryId },
+                commandType: CommandType.StoredProcedure);
+        }
+
+        public async Task<int> AddCourseAsync(Course course)
+        {
+            using var connection = GetConnection();
+            return await connection.ExecuteAsync(
+                "AddCourse",
+                new
+                {
+                    course.Title,
+                    course.Overview,
+                    course.Price,
+                    course.Level,
+                    course.DurationWeeks,
+                    course.OnlineClasses,
+                    course.Lessons,
+                    course.Quizzes,
+                    course.PassPercentage,
+                    course.Certificate,
+                    course.Language,
+                    course.CategoryId
+                },
+                commandType: CommandType.StoredProcedure);
+        }
+
+        public async Task<int> UpdateCourseAsync(Course course)
+        {
+            using var connection = GetConnection();
+            return await connection.ExecuteAsync(
+                "UpdateCourse",
+                new
+                {
+                    course.Id,
+                    course.Title,
+                    course.Overview,
+                    course.Price,
+                    course.Level,
+                    course.DurationWeeks,
+                    course.OnlineClasses,
+                    course.Lessons,
+                    course.Quizzes,
+                    course.PassPercentage,
+                    course.Certificate,
+                    course.Language,
+                    course.CategoryId
+                },
+                commandType: CommandType.StoredProcedure);
+        }
+
+        public async Task<int> DeleteCourseAsync(int courseId)
+        {
+            using var connection = GetConnection();
+            return await connection.ExecuteAsync(
+                "DeleteCourse",
+                new { Id = courseId },
+                commandType: CommandType.StoredProcedure);
+        }
+
+
+        public async Task<int> AddReviewAsync(Review review)
+        {
+            using var connection = GetConnection();
+            return await connection.ExecuteAsync(
+                "AddReview",
+                new
+                {
+                    review.CourseId,
+                    review.Name,
+                    review.Email,
+                    review.ReviewComment,
+                    review.StarsOfTheReview
+                },
+                commandType: CommandType.StoredProcedure);
+        }
+
+        public async Task<IEnumerable<Review>> GetReviewsByCourseAsync(int courseId)
+        {
+            using var connection = GetConnection();
+            return await connection.QueryAsync<Review>(
+                "GetReviewsByCourse",
+                new { CourseId = courseId },
+                commandType: CommandType.StoredProcedure);
+        }
+
+        public async Task<int> DeleteReviewAsync(int reviewId)
+        {
+            using var connection = GetConnection();
+            return await connection.ExecuteAsync(
+                "DeleteReview",
+                new { ReviewId = reviewId },
+                commandType: CommandType.StoredProcedure);
+        }
+
+        private IDbConnection CreateConnection()
+        {
+            return new SqlConnection(_connectionString);
+        }
+
+        public async Task<int> UpdateUserRoleAsync(int userId, string role)
+        {
+            using var connection = CreateConnection();
+            var parameters = new { UserId = userId, Role = role };
+
+            var rowsAffected = await connection.ExecuteAsync(
+                "UpdateUserRole", 
+                parameters,
+                commandType: System.Data.CommandType.StoredProcedure
+            );
+
+            return rowsAffected;
+        }
+
+
 
     }
 }

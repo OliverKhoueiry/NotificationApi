@@ -11,5 +11,23 @@ namespace BusinessLayer
         Task<(ApiResponse, string?, string?)> RefreshTokenAsync(string refreshToken);
         Task<ApiResponse> ResetPasswordAsync(ResetPasswordRequest request);
         Task<ApiResponse> LogoutAsync(string refreshToken);
+
+
+
+        Task<IEnumerable<CourseCategory>> GetAllCategoriesAsync();
+        Task<IEnumerable<Course>> GetCoursesByCategoryAsync(int categoryId);
+        Task<ApiResponse> AddCourseAsync(Course course);
+        Task<ApiResponse> UpdateCourseAsync(Course course);
+        Task<ApiResponse> DeleteCourseAsync(int courseId);
+
+
+        Task<ApiResponse> AddReviewAsync(Review review);
+        Task<IEnumerable<Review>> GetReviewsByCourseAsync(int courseId);
+        Task<ApiResponse> DeleteReviewAsync(int reviewId);
+
+        Task<ApiResponse> PromoteUserToAdminAsync(int userId);
+
+
+
     }
 }
