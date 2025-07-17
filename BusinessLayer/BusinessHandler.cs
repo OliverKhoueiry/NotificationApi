@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using CommonLayer.Common;
 using CommonLayer.Models;
@@ -38,15 +40,13 @@ namespace BusinessLayer
             var rowsAffected = await _dataHandler.AddUserAsync(user);
             if (rowsAffected > 0)
             {
-                // ✅ Send welcome email
                 string subject = "Welcome to Our Service!";
                 string body = $@"
                     <p>Hello {user.Username},</p>
                     <p>Thank you for registering with us. We're excited to have you onboard!</p>
                     <p>You can now login and start using all of our features.</p>
                     <br/>
-                    <p>Cheers,<br/>The Team</p>
-                ";
+                    <p>Cheers,<br/>The Team</p>";
 
                 await _emailService.SendEmailAsync(user.Email, subject, body);
 
@@ -56,11 +56,13 @@ namespace BusinessLayer
             return new ApiResponse(ResponseMessages.ErrorCode, "Registration failed.");
         }
 
-        public async Task<(ApiResponse, string?, string?, string?)> LoginAsync(LoginRequest request)
+        public async Task<(ApiResponse, string?, string?, List<UserPermission>)> LoginAsync(LoginRequest request)
         {
             var user = await _dataHandler.GetUserByEmailAsync(request.Email);
             if (user == null || !PasswordHasher.VerifyPassword(request.Password, user.PasswordHash))
-                return (ResponseMessages.InvalidCredentials, null, null, null);
+                return (ResponseMessages.InvalidCredentials, null, null, new List<UserPermission>());
+
+            user.Permissions = await _dataHandler.GetUserPermissionsAsync(user.Id);
 
             string accessToken = _jwtService.GenerateAccessToken(user);
             string refreshToken = _jwtService.GenerateRefreshToken();
@@ -68,10 +70,8 @@ namespace BusinessLayer
 
             await _dataHandler.UpdateRefreshTokenAsync(user.Id, refreshToken, refreshTokenExpiry);
 
-            return (ResponseMessages.LoginSuccessful, accessToken, refreshToken, user.Role);
+            return (ResponseMessages.LoginSuccessful, accessToken, refreshToken, user.Permissions);
         }
-
-
 
         public async Task<ApiResponse> ForgetPasswordAsync(string email)
         {
@@ -136,6 +136,53 @@ namespace BusinessLayer
             return new ApiResponse(ResponseMessages.SuccessCode, "Logout successful.");
         }
 
+        public async Task<List<UserPermission>> GetAllSectionsAsync()
+        {
+            return await _dataHandler.GetAllSectionsAndActionsAsync();
+        }
+
+        public Task<ApiResponse> AddWebRoleAsync(string name)
+        {
+            return ExecuteSafeAsync(() => _dataHandler.AddWebRoleAsync(name), "Role added successfully.");
+        }
+
+        public Task<ApiResponse> UpdateWebRoleAsync(int id, string name)
+        {
+            return ExecuteSafeAsync(() => _dataHandler.UpdateWebRoleAsync(id, name), "Role updated successfully.");
+        }
+
+        public Task<ApiResponse> DeleteWebRoleAsync(int id)
+        {
+            return ExecuteSafeAsync(() => _dataHandler.DeleteWebRoleAsync(id), "Role deleted successfully.");
+        }
+
+        public Task<List<WebRole>> GetWebRolesAsync()
+        {
+            return _dataHandler.GetWebRolesAsync();
+        }
+
+        public Task<ApiResponse> AssignPermissionAsync(int roleId, int sectionId, string action)
+        {
+            return ExecuteSafeAsync(() => _dataHandler.AssignPermissionAsync(roleId, sectionId, action), "Permission assigned successfully.");
+        }
+
+        public Task<List<UserPermission>> GetRolePermissionsAsync(int roleId)
+        {
+            return _dataHandler.GetRolePermissionsAsync(roleId);
+        }
+
+        private async Task<ApiResponse> ExecuteSafeAsync(Func<Task> action, string successMessage)
+        {
+            try
+            {
+                await action();
+                return new ApiResponse(ResponseMessages.SuccessCode, successMessage);
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ResponseMessages.ErrorCode, ex.Message);
+            }
+        }
 
         public async Task<IEnumerable<CourseCategory>> GetAllCategoriesAsync()
         {
@@ -149,83 +196,173 @@ namespace BusinessLayer
 
         public async Task<ApiResponse> AddCourseAsync(Course course)
         {
-            var rowsAffected = await _dataHandler.AddCourseAsync(course);
-            if (rowsAffected > 0)
-                return ResponseMessages.AddCourseSuccessful;
-
-            return ResponseMessages.AddCourseFailed;
+            try
+            {
+                await _dataHandler.AddCourseAsync(course);
+                return new ApiResponse(ResponseMessages.SuccessCode, "Course added successfully.");
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ResponseMessages.ErrorCode, ex.Message);
+            }
         }
 
         public async Task<ApiResponse> UpdateCourseAsync(Course course)
         {
-            var rowsAffected = await _dataHandler.UpdateCourseAsync(course);
-            if (rowsAffected > 0)
-                return ResponseMessages.UpdateCourseSuccessful;
-
-            return ResponseMessages.UpdateCourseFailed;
+            try
+            {
+                await _dataHandler.UpdateCourseAsync(course);
+                return new ApiResponse(ResponseMessages.SuccessCode, "Course updated successfully.");
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ResponseMessages.ErrorCode, ex.Message);
+            }
         }
 
         public async Task<ApiResponse> DeleteCourseAsync(int courseId)
         {
-            var rowsAffected = await _dataHandler.DeleteCourseAsync(courseId);
-
-            if (rowsAffected >= 1)
+            try
             {
-                return ResponseMessages.CourseDeleted;
+                await _dataHandler.DeleteCourseAsync(courseId);
+                return new ApiResponse(ResponseMessages.SuccessCode, "Course deleted successfully.");
             }
-
-            // Return failed only if no rows affected
-            return ResponseMessages.CourseDeleteFailed;
+            catch (Exception ex)
+            {
+                return new ApiResponse(ResponseMessages.ErrorCode, ex.Message);
+            }
         }
 
+        public async Task<ApiResponse> DeleteReviewAsync(int reviewId)
+        {
+            try
+            {
+                await _dataHandler.DeleteReviewAsync(reviewId);
+                return new ApiResponse(ResponseMessages.SuccessCode, "Review deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ResponseMessages.ErrorCode, ex.Message);
+            }
+        }
+
+        public async Task<ApiResponse> PromoteUserToAdminAsync(int userId)
+        {
+            try
+            {
+                await _dataHandler.PromoteUserToAdminAsync(userId);
+                return new ApiResponse(ResponseMessages.SuccessCode, "User promoted to admin successfully.");
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ResponseMessages.ErrorCode, ex.Message);
+            }
+        }
+
+        public async Task<ApiResponse> AddCategoryAsync(CourseCategory category)
+        {
+            try
+            {
+                await _dataHandler.AddCategoryAsync(category);
+                return new ApiResponse(ResponseMessages.SuccessCode, "Category added successfully.");
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ResponseMessages.ErrorCode, ex.Message);
+            }
+        }
+
+        public async Task<ApiResponse> DeleteCategoryAsync(int categoryId)
+        {
+            try
+            {
+                await _dataHandler.DeleteCategoryAsync(categoryId);
+                return new ApiResponse(ResponseMessages.SuccessCode, "Category deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ResponseMessages.ErrorCode, ex.Message);
+            }
+        }
+
+       
 
         public async Task<ApiResponse> AddReviewAsync(Review review)
         {
-            var rowsAffected = await _dataHandler.AddReviewAsync(review);
-            return rowsAffected > 0
-                ? new ApiResponse(ResponseMessages.SuccessCode, "Review added successfully.")
-                : new ApiResponse(ResponseMessages.ErrorCode, "Failed to add review.");
+            try
+            {
+                review.ReviewDate = DateTime.UtcNow; // Set current date
+                await _dataHandler.AddReviewAsync(review);
+                return new ApiResponse(ResponseMessages.SuccessCode, "Review added successfully.");
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ResponseMessages.ErrorCode, ex.Message);
+            }
         }
+
+
 
         public async Task<IEnumerable<Review>> GetReviewsByCourseAsync(int courseId)
         {
             return await _dataHandler.GetReviewsByCourseAsync(courseId);
         }
 
-        public async Task<ApiResponse> DeleteReviewAsync(int reviewId)
+
+        public async Task<ApiResponse> AddRoleSectionAsync(RoleSection roleSection)
         {
-            var rowsAffected = await _dataHandler.DeleteReviewAsync(reviewId);
-            return rowsAffected > 0
-                ? new ApiResponse(ResponseMessages.SuccessCode, "Review deleted successfully.")
-                : new ApiResponse(ResponseMessages.ErrorCode, "Failed to delete review.");
+            try
+            {
+                await _dataHandler.AddRoleSectionAsync(roleSection);
+                return new ApiResponse(ResponseMessages.SuccessCode, "Role section added successfully.");
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ResponseMessages.ErrorCode, ex.Message);
+            }
         }
 
-        public async Task<ApiResponse> PromoteUserToAdminAsync(int userId)
+        public async Task<ApiResponse> UpdateRoleSectionAsync(RoleSection roleSection)
         {
-            var rowsAffected = await _dataHandler.UpdateUserRoleAsync(userId, "Admin");
-            return rowsAffected > 0
-                ? new ApiResponse(ResponseMessages.SuccessCode, "User promoted to Admin.")
-                : new ApiResponse(ResponseMessages.ErrorCode, "Failed to promote user.");
+            try
+            {
+                await _dataHandler.UpdateRoleSectionAsync(roleSection);
+                return new ApiResponse(ResponseMessages.SuccessCode, "Role section updated successfully.");
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ResponseMessages.ErrorCode, ex.Message);
+            }
+        }
+
+        public async Task<ApiResponse> DeleteRoleSectionAsync(int roleSectionId)
+        {
+            try
+            {
+                await _dataHandler.DeleteRoleSectionAsync(roleSectionId);
+                return new ApiResponse(ResponseMessages.SuccessCode, "Role section deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ResponseMessages.ErrorCode, ex.Message);
+            }
+        }
+
+        public async Task<List<RoleSection>> GetRoleSectionsAsync(int roleId)
+        {
+            return await _dataHandler.GetRoleSectionsAsync(roleId);
+        }
+
+        public async Task<RoleSection?> GetRoleSectionByNameAsync(string roleName, string sectionName)
+        {
+            return await _dataHandler.GetRoleSectionByNameAsync(roleName, sectionName);
         }
 
 
-        public async Task<ApiResponse> AddCategoryAsync(CourseCategory category)
-        {
-            var rowsAffected = await _dataHandler.AddCategoryAsync(category);
-            return rowsAffected > 0
-                ? new ApiResponse(ResponseMessages.SuccessCode, "Category added successfully.")
-                : new ApiResponse(ResponseMessages.ErrorCode, "Failed to add category.");
-        }
-
-        public async Task<ApiResponse> DeleteCategoryAsync(int categoryId)
-        {
-            var rowsAffected = await _dataHandler.DeleteCategoryAsync(categoryId);
-
-            if (rowsAffected > 0)
-                return new ApiResponse(ResponseMessages.SuccessCode, "Category deleted successfully.");
-
-            return new ApiResponse(ResponseMessages.ErrorCode, "Failed to delete category.");
-        }
 
     }
+
+
+
+
 }

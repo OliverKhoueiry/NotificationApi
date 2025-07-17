@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(Roles = "Admin")] // 🔥 Only Admins
+//[Authorize(Roles = "Admin")] 
 public class AdminController : ControllerBase
 {
     private readonly IBusinessHandler _businessHandler;

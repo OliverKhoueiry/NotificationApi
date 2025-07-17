@@ -6,7 +6,8 @@ namespace BusinessLayer
     public interface IBusinessHandler
     {
         Task<ApiResponse> RegisterAsync(RegisterRequest request);
-        Task<(ApiResponse, string?, string?, string?)> LoginAsync(LoginRequest request);
+        Task<(ApiResponse, string?, string?, List<UserPermission>)> LoginAsync(LoginRequest request);
+
 
         Task<ApiResponse> ForgetPasswordAsync(string email);
         Task<(ApiResponse, string?, string?)> RefreshTokenAsync(string refreshToken);
@@ -32,7 +33,24 @@ namespace BusinessLayer
         Task<ApiResponse> AddCategoryAsync(CourseCategory category);
 
         Task<ApiResponse> DeleteCategoryAsync(int categoryId);
+        
+        
+         
+        Task<List<UserPermission>> GetAllSectionsAsync();
 
 
+        Task<ApiResponse> AddWebRoleAsync(string name);
+        Task<ApiResponse> UpdateWebRoleAsync(int id, string name);
+        Task<ApiResponse> DeleteWebRoleAsync(int id);
+        Task<List<WebRole>> GetWebRolesAsync();
+        Task<ApiResponse> AssignPermissionAsync(int roleId, int sectionId, string action);
+        Task<List<UserPermission>> GetRolePermissionsAsync(int roleId);
+
+
+        Task<ApiResponse> AddRoleSectionAsync(RoleSection roleSection);
+        Task<ApiResponse> UpdateRoleSectionAsync(RoleSection roleSection);
+        Task<ApiResponse> DeleteRoleSectionAsync(int roleSectionId);
+        Task<List<RoleSection>> GetRoleSectionsAsync(int roleId);
+        Task<RoleSection?> GetRoleSectionByNameAsync(string roleName, string sectionName);
     }
 }
