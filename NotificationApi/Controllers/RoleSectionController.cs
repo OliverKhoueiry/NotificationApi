@@ -7,7 +7,7 @@ namespace NotificationApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    // ❌ Removed [Authorize(Roles = "SuperAdmin")]
+    
     public class RoleSectionController : ControllerBase
     {
         private readonly IBusinessHandler _businessHandler;

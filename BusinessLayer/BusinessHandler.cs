@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using CommonLayer.Common;
 using CommonLayer.Models;
 using DataLayer;
+using static System.Collections.Specialized.BitVector32;
 
 namespace BusinessLayer
 {
@@ -246,18 +247,19 @@ namespace BusinessLayer
             }
         }
 
-        public async Task<ApiResponse> PromoteUserToAdminAsync(int userId)
+        public async Task<ApiResponse> PromoteUserToRoleAsync(int userId, string roleName)
         {
             try
             {
-                await _dataHandler.PromoteUserToAdminAsync(userId);
-                return new ApiResponse(ResponseMessages.SuccessCode, "User promoted to admin successfully.");
+                await _dataHandler.PromoteUserToRoleAsync(userId, roleName);
+                return new ApiResponse(ResponseMessages.SuccessCode, "User promoted successfully.");
             }
             catch (Exception ex)
             {
-                return new ApiResponse(ResponseMessages.ErrorCode, ex.Message);
+                return new ApiResponse(ResponseMessages.ErrorCode, $"Error promoting user: {ex.Message}");
             }
         }
+
 
         public async Task<ApiResponse> AddCategoryAsync(CourseCategory category)
         {
@@ -359,10 +361,64 @@ namespace BusinessLayer
         }
 
 
+        public async Task<IEnumerable<Review>> GetAllReviewsAsync()
+        {
+            return await _dataHandler.GetAllReviewsAsync();
+        }
+
+
+
+        public async Task<IEnumerable<Course>> GetAllCoursesAsync()
+        {
+            return await _dataHandler.GetAllCoursesAsync();
+        }
+
+
+        public async Task<ApiResponse> AddSectionAsync(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                return new ApiResponse(ResponseMessages.ValidationErrorCode, "Section name is required.");
+
+            return await _dataHandler.AddSectionAsync(name);
+        }
+
+        public async Task<ApiResponse> UpdateSectionAsync(int id, string name)
+        {
+            if (id <= 0 || string.IsNullOrWhiteSpace(name))
+                return new ApiResponse(ResponseMessages.ValidationErrorCode, "Valid section id and name are required.");
+
+            return await _dataHandler.UpdateSectionAsync(id, name);
+        }
+
+        public async Task<ApiResponse> DeleteSectionAsync(int id)
+        {
+            if (id <= 0)
+                return new ApiResponse(ResponseMessages.ValidationErrorCode, "Valid section id is required.");
+
+            return await _dataHandler.DeleteSectionAsync(id);
+        }
+
+
+        public async Task<ApiResponse> AddSessionAsync(Session session)
+    => await _dataHandler.AddSessionAsync(session);
+
+        public async Task<ApiResponse> UpdateSessionAsync(Session session)
+            => await _dataHandler.UpdateSessionAsync(session);
+
+        public async Task<ApiResponse> DeleteSessionAsync(int sessionId)
+            => await _dataHandler.DeleteSessionAsync(sessionId);
+
+        public async Task<IEnumerable<Session>> GetAllSessionsAsync()
+            => await _dataHandler.GetAllSessionsAsync();
+
+        public async Task<ApiResponse> AddSessionVideoAsync(SessionVideo video)
+            => await _dataHandler.AddSessionVideoAsync(video);
+
+        public async Task<ApiResponse> DeleteSessionVideoAsync(int videoId)
+            => await _dataHandler.DeleteSessionVideoAsync(videoId);
+
+        public async Task<IEnumerable<SessionVideo>> GetSessionVideosAsync(int sessionId)
+            => await _dataHandler.GetSessionVideosAsync(sessionId);
 
     }
-
-
-
-
 }

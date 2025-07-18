@@ -48,6 +48,12 @@ public class CoursesController : ControllerBase
         var result = await _businessHandler.DeleteCourseAsync(id);
         return Ok(result);
     }
+    [HttpGet("AllCourses")]
+    public async Task<IActionResult> GetAllCourses()
+    {
+        var courses = await _businessHandler.GetAllCoursesAsync();
+        return Ok(courses);
+    }
 
     [HttpPost("AddCategories")]
     public async Task<IActionResult> AddCategories([FromBody] CourseCategory category)

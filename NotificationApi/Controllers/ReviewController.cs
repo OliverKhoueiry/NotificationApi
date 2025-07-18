@@ -32,4 +32,13 @@ public class ReviewsController : ControllerBase
         var response = await _businessHandler.DeleteReviewAsync(id);
         return Ok(response);
     }
+
+    [HttpGet("GetAllReviews")]
+    public async Task<IActionResult> GetAllReviews()
+    {
+        var reviews = await _businessHandler.GetAllReviewsAsync();
+        return Ok(reviews);
+    }
+
+
 }

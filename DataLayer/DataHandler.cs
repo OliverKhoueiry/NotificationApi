@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CommonLayer.Common;
+using static System.Collections.Specialized.BitVector32;
 
 namespace DataLayer
 {
@@ -440,18 +441,21 @@ namespace DataLayer
             }
         }
 
-        public async Task PromoteUserToAdminAsync(int userId)
+        public async Task PromoteUserToRoleAsync(int userId, string roleName)
         {
             using (var connection = new SqlConnection(_connectionString))
-            using (var command = new SqlCommand("PromoteUserToAdmin", connection))
+            using (var command = new SqlCommand("PromoteUserToRole", connection))
             {
                 command.CommandType = CommandType.StoredProcedure;
                 command.Parameters.AddWithValue("@UserId", userId);
+                command.Parameters.AddWithValue("@RoleName", roleName);
 
                 await connection.OpenAsync();
                 await command.ExecuteNonQueryAsync();
             }
         }
+
+
 
         public async Task AddCategoryAsync(CourseCategory category)
         {
@@ -495,7 +499,198 @@ namespace DataLayer
             }
         }
 
+        public async Task<IEnumerable<Review>> GetAllReviewsAsync()
+        {
+            const string spName = "GetAllReviews";
 
+            using var connection = new SqlConnection(_connectionString);
+            var reviews = await connection.QueryAsync<Review>(
+                spName,
+                commandType: CommandType.StoredProcedure);
+
+            return reviews;
+        }
+
+        public async Task<IEnumerable<Course>> GetAllCoursesAsync()
+        {
+            const string spName = "GetAllCourses";
+
+            using var connection = new SqlConnection(_connectionString);
+            var courses = await connection.QueryAsync<Course>(
+                spName,
+                commandType: CommandType.StoredProcedure);
+
+            return courses;
+        }
+
+        public async Task<ApiResponse> AddSectionAsync(string name)
+        {
+            try
+            {
+                using var connection = new SqlConnection(_connectionString);
+                var parameters = new { Name = name };
+
+                await connection.ExecuteAsync("AddSection", parameters, commandType: CommandType.StoredProcedure);
+
+                return new ApiResponse(ResponseMessages.SuccessCode, "Section added successfully.");
+            }
+            catch (SqlException ex) when (ex.Number == 50000) // Handles RAISERROR from SQL
+            {
+                return new ApiResponse(ResponseMessages.ErrorCode, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ResponseMessages.ErrorCode, ex.Message);
+            }
+        }
+
+        public async Task<ApiResponse> UpdateSectionAsync(int id, string name)
+        {
+            try
+            {
+                using var connection = new SqlConnection(_connectionString);
+                var parameters = new { Id = id, Name = name };
+
+                await connection.ExecuteAsync("UpdateSection", parameters, commandType: CommandType.StoredProcedure);
+
+                return new ApiResponse(ResponseMessages.SuccessCode, "Section updated successfully.");
+            }
+            catch (SqlException ex) when (ex.Number == 50000)
+            {
+                return new ApiResponse(ResponseMessages.ErrorCode, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ResponseMessages.ErrorCode, ex.Message);
+            }
+        }
+
+        public async Task<ApiResponse> DeleteSectionAsync(int id)
+        {
+            try
+            {
+                using var connection = new SqlConnection(_connectionString);
+                var parameters = new { Id = id };
+
+                await connection.ExecuteAsync("DeleteSection", parameters, commandType: CommandType.StoredProcedure);
+
+                return new ApiResponse(ResponseMessages.SuccessCode, "Section deleted successfully.");
+            }
+            catch (SqlException ex) when (ex.Number == 50000)
+            {
+                return new ApiResponse(ResponseMessages.ErrorCode, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ResponseMessages.ErrorCode, ex.Message);
+            }
+        }
+
+        public async Task<IEnumerable<Section>> GetAllSectionsAsync()
+        {
+            const string spName = "GetAllSections";
+
+            using var connection = new SqlConnection(_connectionString);
+            var sections = await connection.QueryAsync<Section>(
+                spName,
+                commandType: CommandType.StoredProcedure);
+
+            return sections;
+        }
+
+        public async Task<ApiResponse> AddSessionAsync(Session session)
+        {
+            const string spName = "AddSession";
+
+            using var connection = new SqlConnection(_connectionString);
+            await connection.ExecuteAsync(spName, new
+            {
+                session.CourseId,
+                session.Title,
+                session.Description
+            }, commandType: CommandType.StoredProcedure);
+
+            return new ApiResponse(ResponseMessages.SuccessCode, "Session added successfully.");
+        }
+
+        public async Task<ApiResponse> UpdateSessionAsync(Session session)
+        {
+            const string spName = "UpdateSession";
+
+            using var connection = new SqlConnection(_connectionString);
+            await connection.ExecuteAsync(spName, new
+            {
+                session.Id,
+                session.Title,
+                session.Description
+            }, commandType: CommandType.StoredProcedure);
+
+            return new ApiResponse(ResponseMessages.SuccessCode, "Session updated successfully.");
+        }
+
+        public async Task<ApiResponse> DeleteSessionAsync(int sessionId)
+        {
+            const string spName = "DeleteSession";
+
+            using var connection = new SqlConnection(_connectionString);
+            await connection.ExecuteAsync(spName, new { Id = sessionId }, commandType: CommandType.StoredProcedure);
+
+            return new ApiResponse(ResponseMessages.SuccessCode, "Session deleted successfully.");
+        }
+
+        public async Task<IEnumerable<Session>> GetAllSessionsAsync()
+        {
+            const string spName = "GetAllSessionsWithVideos";
+
+            using var connection = new SqlConnection(_connectionString);
+            using var multi = await connection.QueryMultipleAsync(
+                spName,
+                commandType: CommandType.StoredProcedure);
+
+            var sessions = (await multi.ReadAsync<Session>()).ToList();
+            var videos = await multi.ReadAsync<SessionVideo>();
+
+            foreach (var session in sessions)
+            {
+                session.Videos = videos.Where(v => v.SessionId == session.Id).ToList();
+            }
+
+            return sessions;
+        }
+
+
+        public async Task<ApiResponse> AddSessionVideoAsync(SessionVideo video)
+        {
+            const string spName = "AddSessionVideo";
+
+            using var connection = new SqlConnection(_connectionString);
+            await connection.ExecuteAsync(spName, new
+            {
+                video.SessionId,
+                video.FileName,
+                video.FilePath
+            }, commandType: CommandType.StoredProcedure);
+
+            return new ApiResponse(ResponseMessages.SuccessCode, "Video added successfully.");
+        }
+
+        public async Task<ApiResponse> DeleteSessionVideoAsync(int videoId)
+        {
+            const string spName = "DeleteSessionVideo";
+
+            using var connection = new SqlConnection(_connectionString);
+            await connection.ExecuteAsync(spName, new { Id = videoId }, commandType: CommandType.StoredProcedure);
+
+            return new ApiResponse(ResponseMessages.SuccessCode, "Video deleted successfully.");
+        }
+
+        public async Task<IEnumerable<SessionVideo>> GetSessionVideosAsync(int sessionId)
+        {
+            const string spName = "GetSessionVideos";
+
+            using var connection = new SqlConnection(_connectionString);
+            return await connection.QueryAsync<SessionVideo>(spName, new { SessionId = sessionId }, commandType: CommandType.StoredProcedure);
+        }
 
 
     }

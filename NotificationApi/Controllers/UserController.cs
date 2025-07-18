@@ -10,12 +10,12 @@ namespace NotificationApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class NotificationController : ControllerBase
+    public class UserController : ControllerBase
     {
         private readonly IBusinessHandler _businessHandler;
         private readonly JwtService _jwtService;
 
-        public NotificationController(IBusinessHandler businessHandler, JwtService jwtService)
+        public UserController(IBusinessHandler businessHandler, JwtService jwtService)
         {
             _businessHandler = businessHandler;
             _jwtService = jwtService;

@@ -1,5 +1,6 @@
 ﻿using CommonLayer.Common;
 using CommonLayer.Models;
+using static System.Collections.Specialized.BitVector32;
 
 namespace BusinessLayer
 {
@@ -27,7 +28,8 @@ namespace BusinessLayer
         Task<IEnumerable<Review>> GetReviewsByCourseAsync(int courseId);
         Task<ApiResponse> DeleteReviewAsync(int reviewId);
 
-        Task<ApiResponse> PromoteUserToAdminAsync(int userId);
+        Task<ApiResponse> PromoteUserToRoleAsync(int userId, string roleName);
+
 
 
         Task<ApiResponse> AddCategoryAsync(CourseCategory category);
@@ -52,5 +54,21 @@ namespace BusinessLayer
         Task<ApiResponse> DeleteRoleSectionAsync(int roleSectionId);
         Task<List<RoleSection>> GetRoleSectionsAsync(int roleId);
         Task<RoleSection?> GetRoleSectionByNameAsync(string roleName, string sectionName);
+        Task<IEnumerable<Review>> GetAllReviewsAsync();
+        Task<IEnumerable<Course>> GetAllCoursesAsync();
+
+        Task<ApiResponse> AddSectionAsync(string name);
+        Task<ApiResponse> UpdateSectionAsync(int id, string name);
+        Task<ApiResponse> DeleteSectionAsync(int id);
+
+
+        Task<ApiResponse> AddSessionAsync(Session session);
+        Task<ApiResponse> UpdateSessionAsync(Session session);
+        Task<ApiResponse> DeleteSessionAsync(int sessionId);
+        Task<IEnumerable<Session>> GetAllSessionsAsync();
+
+        Task<ApiResponse> AddSessionVideoAsync(SessionVideo video);
+        Task<ApiResponse> DeleteSessionVideoAsync(int videoId);
+        Task<IEnumerable<SessionVideo>> GetSessionVideosAsync(int sessionId);
     }
 }

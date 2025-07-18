@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using CommonLayer.Common;
 using CommonLayer.Models;
+using static System.Collections.Specialized.BitVector32;
 
 namespace DataLayer
 {
@@ -52,11 +53,26 @@ namespace DataLayer
         Task UpdateCourseAsync(Course course);
         Task DeleteCourseAsync(int courseId);
         Task DeleteReviewAsync(int reviewId);
-        Task PromoteUserToAdminAsync(int userId);
+        Task PromoteUserToRoleAsync(int userId, string roleName);
+
         Task AddCategoryAsync(CourseCategory category);
         Task<ApiResponse> DeleteCategoryAsync(int categoryId);
 
+        Task<IEnumerable<Review>> GetAllReviewsAsync();
+        Task<IEnumerable<Course>> GetAllCoursesAsync();
 
+        Task<ApiResponse> AddSectionAsync(string name);
+        Task<ApiResponse> UpdateSectionAsync(int id, string name);
+        Task<ApiResponse> DeleteSectionAsync(int id);
+        Task<IEnumerable<Section>> GetAllSectionsAsync();
 
+        Task<ApiResponse> AddSessionAsync(Session session);
+        Task<ApiResponse> UpdateSessionAsync(Session session);
+        Task<ApiResponse> DeleteSessionAsync(int sessionId);
+        Task<IEnumerable<Session>> GetAllSessionsAsync();
+
+        Task<ApiResponse> AddSessionVideoAsync(SessionVideo video);
+        Task<ApiResponse> DeleteSessionVideoAsync(int videoId);
+        Task<IEnumerable<SessionVideo>> GetSessionVideosAsync(int sessionId);
     }
 }
