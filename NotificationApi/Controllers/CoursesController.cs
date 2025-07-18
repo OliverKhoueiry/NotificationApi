@@ -14,7 +14,7 @@ public class CoursesController : ControllerBase
         _businessHandler = businessHandler;
     }
 
-    [HttpGet("categories")]
+    [HttpGet("GetCategoriesWithCount")]
     public async Task<IActionResult> GetAllCategories()
     {
         var result = await _businessHandler.GetAllCategoriesAsync();

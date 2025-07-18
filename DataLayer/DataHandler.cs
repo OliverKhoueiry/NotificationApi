@@ -316,7 +316,8 @@ namespace DataLayer
                         categories.Add(new CourseCategory
                         {
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                            Name = reader.GetString(reader.GetOrdinal("Name"))
+                            Name = reader.GetString(reader.GetOrdinal("Name")),
+                            CourseCount = reader.GetInt32(reader.GetOrdinal("CourseCount"))
                         });
                     }
                 }
