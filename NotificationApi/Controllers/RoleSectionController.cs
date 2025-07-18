@@ -17,14 +17,14 @@ namespace NotificationApi.Controllers
             _businessHandler = businessHandler;
         }
 
-        [HttpPost]
+        [HttpPost("AddRoleSection")]
         public async Task<IActionResult> AddRoleSection([FromBody] RoleSection request)
         {
             var response = await _businessHandler.AddRoleSectionAsync(request);
             return StatusCode(response.Code == ResponseMessages.SuccessCode ? 200 : 400, response);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("UpdateRoleSection/{id}")]
         public async Task<IActionResult> UpdateRoleSection(int id, [FromBody] RoleSection request)
         {
             request.Id = id;
@@ -32,7 +32,7 @@ namespace NotificationApi.Controllers
             return StatusCode(response.Code == ResponseMessages.SuccessCode ? 200 : 400, response);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("DeleteRoleSection/{id}")]
         public async Task<IActionResult> DeleteRoleSection(int id)
         {
             var response = await _businessHandler.DeleteRoleSectionAsync(id);
