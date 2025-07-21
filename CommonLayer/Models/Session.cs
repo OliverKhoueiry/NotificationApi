@@ -4,5 +4,6 @@
     public int CourseId { get; set; }
     public string Title { get; set; } = null!;
     public string? Description { get; set; }
-    public List<SessionVideo> Videos { get; set; } = new();
+    public List<SessionVideo>? Videos { get; set; }
+
 }

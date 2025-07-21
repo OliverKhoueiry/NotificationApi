@@ -58,6 +58,10 @@
 
         public static readonly ApiResponse CourseDeleteFailed =
             new ApiResponse(ErrorCode, "Failed to delete course.");
+
+        public static readonly ApiResponse SessionAddedSuccessfully =
+            new ApiResponse(SuccessCode, "Session added successfully.");
+
     }
 
     public record ApiResponse(int Code, string Description);

@@ -400,7 +400,12 @@ namespace BusinessLayer
 
 
         public async Task<ApiResponse> AddSessionAsync(Session session)
-    => await _dataHandler.AddSessionAsync(session);
+        {
+            await _dataHandler.AddSessionAsync(session);
+            return ResponseMessages.SessionAddedSuccessfully;
+        }
+
+
 
         public async Task<ApiResponse> UpdateSessionAsync(Session session)
             => await _dataHandler.UpdateSessionAsync(session);
@@ -419,6 +424,8 @@ namespace BusinessLayer
 
         public async Task<IEnumerable<SessionVideo>> GetSessionVideosAsync(int sessionId)
             => await _dataHandler.GetSessionVideosAsync(sessionId);
+
+       
 
     }
 }

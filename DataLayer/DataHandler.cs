@@ -599,20 +599,23 @@ namespace DataLayer
             return sections;
         }
 
-        public async Task<ApiResponse> AddSessionAsync(Session session)
+        public async Task AddSessionAsync(Session session)
         {
             const string spName = "AddSession";
-
             using var connection = new SqlConnection(_connectionString);
-            await connection.ExecuteAsync(spName, new
-            {
-                session.CourseId,
-                session.Title,
-                session.Description
-            }, commandType: CommandType.StoredProcedure);
-
-            return new ApiResponse(ResponseMessages.SuccessCode, "Session added successfully.");
+            await connection.ExecuteAsync(
+                spName,
+                new
+                {
+                    session.CourseId,
+                    session.Title,
+                    session.Description
+                },
+                commandType: CommandType.StoredProcedure);
         }
+
+
+
 
         public async Task<ApiResponse> UpdateSessionAsync(Session session)
         {
@@ -692,7 +695,5 @@ namespace DataLayer
             using var connection = new SqlConnection(_connectionString);
             return await connection.QueryAsync<SessionVideo>(spName, new { SessionId = sessionId }, commandType: CommandType.StoredProcedure);
         }
-
-
     }
 }

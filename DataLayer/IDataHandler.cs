@@ -66,7 +66,7 @@ namespace DataLayer
         Task<ApiResponse> DeleteSectionAsync(int id);
         Task<IEnumerable<Section>> GetAllSectionsAsync();
 
-        Task<ApiResponse> AddSessionAsync(Session session);
+        Task AddSessionAsync(Session session);
         Task<ApiResponse> UpdateSessionAsync(Session session);
         Task<ApiResponse> DeleteSessionAsync(int sessionId);
         Task<IEnumerable<Session>> GetAllSessionsAsync();
