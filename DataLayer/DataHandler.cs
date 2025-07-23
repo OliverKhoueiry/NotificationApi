@@ -819,21 +819,42 @@ namespace DataLayer
 
         public async Task<ApiResponse> UpdateUserAsync(int userId, UpdateUserDto userDto)
         {
-            var sql = "UPDATE Users SET Username=@Username, Email=@Email, Role=@Role WHERE Id=@Id";
-
-            using var connection = new SqlConnection(_connectionString);
-            var result = await connection.ExecuteAsync(sql, new
+            try
             {
-                userDto.Username,
-                userDto.Email,
-                userDto.Role,
-                Id = userId
-            });
+                using var connection = new SqlConnection(_connectionString);
+                await connection.OpenAsync();
 
-            return result > 0
-                ? ResponseMessages.UserUpdatedSuccessfully
-                : ResponseMessages.Error;
+                // Get Role name from RoleId
+                var roleName = await connection.QueryFirstOrDefaultAsync<string>(
+                    "SELECT Name FROM WebRoles WHERE Id = @RoleId",
+                    new { RoleId = userDto.RoleId });
+
+                if (roleName == null)
+                {
+                    return new ApiResponse(ResponseMessages.ErrorCode, "Invalid RoleId provided.");
+                }
+
+                // Update user
+                var sql = "UPDATE Users SET Username=@Username, Email=@Email, Role=@Role WHERE Id=@Id";
+
+                var result = await connection.ExecuteAsync(sql, new
+                {
+                    userDto.Username,
+                    userDto.Email,
+                    Role = roleName, // 👈 Set Role as RoleName
+                    Id = userId
+                });
+
+                return result > 0
+                    ? ResponseMessages.UserUpdatedSuccessfully
+                    : ResponseMessages.Error;
+            }
+            catch (Exception)
+            {
+                return ResponseMessages.Error;
+            }
         }
+
 
         public async Task<ApiResponse> DeleteUserAsync(int userId)
         {
