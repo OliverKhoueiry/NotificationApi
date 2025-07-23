@@ -15,6 +15,6 @@
         public bool Certificate { get; set; }
         public string Language { get; set; }
         public int CategoryId { get; set; }
-        public string CategoryName { get; set; } // Optional for joins
+       
     }
 }
