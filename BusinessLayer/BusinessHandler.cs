@@ -444,6 +444,10 @@ namespace BusinessLayer
         }
 
 
+        public async Task<List<UserDto>> GetAllUsersAsync()
+        {
+            return await _dataHandler.GetAllUsersAsync();
+        }
 
     }
 }

@@ -760,6 +760,20 @@ namespace DataLayer
             }
         }
 
+        public async Task<List<UserDto>> GetAllUsersAsync()
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var sql = @"
+            SELECT u.Username, u.Email, u.CreatedAt, u.Role
+            FROM Users u
+            
+        ";
+
+                var users = await connection.QueryAsync<UserDto>(sql);
+                return users.ToList();
+            }
+        }
 
     }
 }

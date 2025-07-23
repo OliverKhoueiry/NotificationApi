@@ -101,6 +101,12 @@ namespace NotificationApi.Controllers
             var response = await _businessHandler.LogoutAsync(request.RefreshToken);
             return Ok(response);
         }
+        [HttpGet("GetAllUsers")]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            var users = await _businessHandler.GetAllUsersAsync();
+            return Ok(users);
+        }
 
         // ✅ New endpoint: Get permissions for a section based on token + section name
         [HttpPost("section")]
