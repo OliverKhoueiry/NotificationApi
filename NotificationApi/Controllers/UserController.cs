@@ -5,6 +5,7 @@ using CommonLayer.Common;
 using System.Threading.Tasks;
 using System.Linq;
 using System;
+using CommonLayer.Dtos;
 
 namespace NotificationApi.Controllers
 {
@@ -107,7 +108,26 @@ namespace NotificationApi.Controllers
             var users = await _businessHandler.GetAllUsersAsync();
             return Ok(users);
         }
+        [HttpPost("add")]
+        public async Task<IActionResult> AddUser([FromBody] UserDto userDto)
+        {
+            var response = await _businessHandler.AddUserAsync(userDto);
+            return StatusCode(response.Code == ResponseMessages.SuccessCode ? 200 : 400, response);
+        }
 
+        [HttpPut("update/{id}")]
+        public async Task<IActionResult> UpdateUser(int id, [FromBody] UpdateUserDto userDto)
+        {
+            var response = await _businessHandler.UpdateUserAsync(id, userDto);
+            return StatusCode(response.Code == ResponseMessages.SuccessCode ? 200 : 400, response);
+        }
+
+        [HttpDelete("delete/{id}")]
+        public async Task<IActionResult> DeleteUser(int id)
+        {
+            var response = await _businessHandler.DeleteUserAsync(id);
+            return StatusCode(response.Code == ResponseMessages.SuccessCode ? 200 : 400, response);
+        }
         // ✅ New endpoint: Get permissions for a section based on token + section name
         [HttpPost("section")]
         public async Task<IActionResult> GetSectionPermissions([FromBody] SectionRequest request)

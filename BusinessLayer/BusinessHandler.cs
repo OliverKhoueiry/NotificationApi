@@ -448,6 +448,20 @@ namespace BusinessLayer
         {
             return await _dataHandler.GetAllUsersAsync();
         }
+        public async Task<ApiResponse> AddUserAsync(UserDto userDto)
+        {
+            return await _dataHandler.AddUserAsync(userDto);
+        }
+
+        public async Task<ApiResponse> UpdateUserAsync(int userId, UpdateUserDto userDto)
+        {
+            return await _dataHandler.UpdateUserAsync(userId, userDto);
+        }
+
+        public async Task<ApiResponse> DeleteUserAsync(int userId)
+        {
+            return await _dataHandler.DeleteUserAsync(userId);
+        }
 
     }
 }

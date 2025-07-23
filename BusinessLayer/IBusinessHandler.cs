@@ -76,6 +76,9 @@ namespace BusinessLayer
         Task<ApiResponse> UpdateCategoryAsync(CategoryDto category);
         Task<Course?> GetCourseByIdAsync(int courseId);
         Task<List<UserDto>> GetAllUsersAsync();
+        Task<ApiResponse> AddUserAsync(UserDto userDto);
+        Task<ApiResponse> UpdateUserAsync(int userId, UpdateUserDto userDto);
+        Task<ApiResponse> DeleteUserAsync(int userId);
 
     }
 }

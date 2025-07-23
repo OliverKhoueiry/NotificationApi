@@ -1,10 +1,9 @@
 ﻿namespace CommonLayer.Dtos
 {
-    public class UserDto
+    public class UpdateUserDto
     {
         public string Username { get; set; }
         public string Email { get; set; }
-        public string Role { get; set; } = "User";
-        public string Password { get; set; } // For Add
+        public string Role { get; set; }
     }
 }

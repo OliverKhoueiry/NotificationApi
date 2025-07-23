@@ -775,5 +775,56 @@ namespace DataLayer
             }
         }
 
+        public async Task<ApiResponse> AddUserAsync(UserDto userDto)
+        {
+            var passwordHash = BCrypt.Net.BCrypt.HashPassword(userDto.Password);
+
+            var sql = "INSERT INTO Users (Username, Email, PasswordHash, Role, CreatedAt) " +
+                      "VALUES (@Username, @Email, @PasswordHash, @Role, GETDATE())";
+
+            using var connection = new SqlConnection(_connectionString);
+            var result = await connection.ExecuteAsync(sql, new
+            {
+                userDto.Username,
+                userDto.Email,
+                PasswordHash = passwordHash,
+                userDto.Role
+            });
+
+            return result > 0
+                ? ResponseMessages.UserAddedSuccessfully
+                : ResponseMessages.Error;
+        }
+
+        public async Task<ApiResponse> UpdateUserAsync(int userId, UpdateUserDto userDto)
+        {
+            var sql = "UPDATE Users SET Username=@Username, Email=@Email, Role=@Role WHERE Id=@Id";
+
+            using var connection = new SqlConnection(_connectionString);
+            var result = await connection.ExecuteAsync(sql, new
+            {
+                userDto.Username,
+                userDto.Email,
+                userDto.Role,
+                Id = userId
+            });
+
+            return result > 0
+                ? ResponseMessages.UserUpdatedSuccessfully
+                : ResponseMessages.Error;
+        }
+
+        public async Task<ApiResponse> DeleteUserAsync(int userId)
+        {
+            var sql = "DELETE FROM Users WHERE Id=@Id";
+
+            using var connection = new SqlConnection(_connectionString);
+            var result = await connection.ExecuteAsync(sql, new { Id = userId });
+
+            return result > 0
+                ? ResponseMessages.UserDeletedSuccessfully
+                : ResponseMessages.Error;
+        }
+
     }
 }

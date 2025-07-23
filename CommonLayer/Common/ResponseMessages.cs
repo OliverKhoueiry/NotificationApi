@@ -67,6 +67,17 @@
 
         public static readonly ApiResponse CategoryUpdateFailed =
             new ApiResponse(ErrorCode, "Failed to update category");
+        public static readonly ApiResponse UserAddedSuccessfully =
+             new ApiResponse(SuccessCode, "User added successfully");
+
+        public static readonly ApiResponse UserUpdatedSuccessfully =
+            new ApiResponse(SuccessCode, "User updated successfully");
+
+        public static readonly ApiResponse UserDeletedSuccessfully =
+            new ApiResponse(SuccessCode, "User deleted successfully");
+        public static readonly ApiResponse Error =
+             new ApiResponse(ErrorCode, "An error occurred");
+
 
 
     }
