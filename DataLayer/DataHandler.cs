@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CommonLayer.Common;
 using static System.Collections.Specialized.BitVector32;
+using CommonLayer.Dtos;
 
 namespace DataLayer
 {
@@ -695,5 +696,33 @@ namespace DataLayer
             using var connection = new SqlConnection(_connectionString);
             return await connection.QueryAsync<SessionVideo>(spName, new { SessionId = sessionId }, commandType: CommandType.StoredProcedure);
         }
+
+        public async Task<List<CategoryDto>> LoadCategoriesAsync()
+        {
+            var categories = new List<CategoryDto>();
+
+            using (var connection = new SqlConnection(_connectionString))
+            using (var command = new SqlCommand("SELECT Id, Name FROM CourseCategories", connection))
+            {
+                command.CommandType = CommandType.Text;
+
+                await connection.OpenAsync();
+                using (var reader = await command.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        categories.Add(new CategoryDto
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            Name = reader.GetString(reader.GetOrdinal("Name"))
+                        });
+                    }
+                }
+            }
+
+            return categories;
+        }
+
+
     }
 }

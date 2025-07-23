@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CommonLayer.Common;
+using CommonLayer.Dtos;
 using CommonLayer.Models;
 using DataLayer;
 using static System.Collections.Specialized.BitVector32;
@@ -425,7 +426,12 @@ namespace BusinessLayer
         public async Task<IEnumerable<SessionVideo>> GetSessionVideosAsync(int sessionId)
             => await _dataHandler.GetSessionVideosAsync(sessionId);
 
-       
+        public async Task<List<CategoryDto>> LoadCategoriesAsync()
+        {
+            return await _dataHandler.LoadCategoriesAsync();
+        }
+
+
 
     }
 }

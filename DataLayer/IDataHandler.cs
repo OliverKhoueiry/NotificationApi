@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using CommonLayer.Common;
+using CommonLayer.Dtos;
 using CommonLayer.Models;
 using static System.Collections.Specialized.BitVector32;
 
@@ -74,5 +75,8 @@ namespace DataLayer
         Task<ApiResponse> AddSessionVideoAsync(SessionVideo video);
         Task<ApiResponse> DeleteSessionVideoAsync(int videoId);
         Task<IEnumerable<SessionVideo>> GetSessionVideosAsync(int sessionId);
+        Task<List<CategoryDto>> LoadCategoriesAsync();
+
+
     }
 }

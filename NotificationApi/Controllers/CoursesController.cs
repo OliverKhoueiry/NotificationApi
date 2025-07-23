@@ -68,4 +68,11 @@ public class CoursesController : ControllerBase
         var result = await _businessHandler.DeleteCategoryAsync(id);
         return Ok(result);
     }
+    [HttpGet("loadcategories")]
+    public async Task<IActionResult> LoadCategories()
+    {
+        var categories = await _businessHandler.LoadCategoriesAsync();
+        return Ok(categories);
+    }
+
 }
