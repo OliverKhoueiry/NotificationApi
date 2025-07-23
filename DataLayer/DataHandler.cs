@@ -777,24 +777,45 @@ namespace DataLayer
 
         public async Task<ApiResponse> AddUserAsync(UserDto userDto)
         {
-            var passwordHash = BCrypt.Net.BCrypt.HashPassword(userDto.Password);
-
-            var sql = "INSERT INTO Users (Username, Email, PasswordHash, Role, CreatedAt) " +
-                      "VALUES (@Username, @Email, @PasswordHash, @Role, GETDATE())";
-
-            using var connection = new SqlConnection(_connectionString);
-            var result = await connection.ExecuteAsync(sql, new
+            try
             {
-                userDto.Username,
-                userDto.Email,
-                PasswordHash = passwordHash,
-                userDto.Role
-            });
+                using (var connection = new SqlConnection(_connectionString))
+                {
+                    // Check if user already exists
+                    var checkUser = await connection.QueryFirstOrDefaultAsync<User>(
+                        "SELECT * FROM Users WHERE Email = @Email OR Username = @Username",
+                        new { userDto.Email, userDto.Username });
 
-            return result > 0
-                ? ResponseMessages.UserAddedSuccessfully
-                : ResponseMessages.Error;
+                    if (checkUser != null)
+                    {
+                        return ResponseMessages.UserAlreadyExists;
+                    }
+
+                    // Default password
+                    string defaultPassword = "123456"; // 👈 Your default password
+                    var hashedPassword = BCrypt.Net.BCrypt.HashPassword(defaultPassword);
+
+                    // Prepare parameters
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Username", userDto.Username);
+                    parameters.Add("@Email", userDto.Email);
+                    parameters.Add("@PasswordHash", hashedPassword); // 👈 Fixed here
+                    parameters.Add("@RoleId", userDto.RoleId);
+
+                    // Call stored procedure
+                    await connection.ExecuteAsync("AddUserWithRoleId", parameters, commandType: CommandType.StoredProcedure);
+
+                    return ResponseMessages.UserAddedSuccessfully;
+                }
+            }
+            catch (Exception)
+            {
+                return ResponseMessages.Error;
+            }
         }
+
+
+
 
         public async Task<ApiResponse> UpdateUserAsync(int userId, UpdateUserDto userDto)
         {

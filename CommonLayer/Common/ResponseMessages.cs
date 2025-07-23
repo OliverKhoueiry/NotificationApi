@@ -78,6 +78,8 @@
         public static readonly ApiResponse Error =
              new ApiResponse(ErrorCode, "An error occurred");
 
+        public static readonly ApiResponse UserAlreadyExists =
+            new ApiResponse(AlreadyExistsCode, "A user with this email or username already exists.");
 
 
     }
