@@ -7,6 +7,8 @@ using CommonLayer.Dtos;
 using CommonLayer.Models;
 using DataLayer;
 using static System.Collections.Specialized.BitVector32;
+using CommonLayer.Dtos;
+
 
 namespace BusinessLayer
 {
@@ -431,6 +433,10 @@ namespace BusinessLayer
             return await _dataHandler.LoadCategoriesAsync();
         }
 
+        public async Task<ApiResponse> UpdateCategoryAsync(CategoryDto category)
+        {
+            return await _dataHandler.UpdateCategoryAsync(category);
+        }
 
 
     }

@@ -6,6 +6,7 @@ using CommonLayer.Dtos;
 using CommonLayer.Models;
 using static System.Collections.Specialized.BitVector32;
 
+
 namespace DataLayer
 {
     public interface IDataHandler
@@ -76,6 +77,8 @@ namespace DataLayer
         Task<ApiResponse> DeleteSessionVideoAsync(int videoId);
         Task<IEnumerable<SessionVideo>> GetSessionVideosAsync(int sessionId);
         Task<List<CategoryDto>> LoadCategoriesAsync();
+        Task<ApiResponse> UpdateCategoryAsync(CategoryDto category);
+
 
 
     }

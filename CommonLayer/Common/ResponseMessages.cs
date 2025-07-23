@@ -62,6 +62,13 @@
         public static readonly ApiResponse SessionAddedSuccessfully =
             new ApiResponse(SuccessCode, "Session added successfully.");
 
+        public static readonly ApiResponse CategoryUpdatedSuccessfully =
+            new ApiResponse(SuccessCode, "Category updated successfully");
+
+        public static readonly ApiResponse CategoryUpdateFailed =
+            new ApiResponse(ErrorCode, "Failed to update category");
+
+
     }
 
     public record ApiResponse(int Code, string Description);

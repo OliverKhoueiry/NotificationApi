@@ -1,7 +1,10 @@
 ﻿using BusinessLayer;
+using CommonLayer.Common;
 using CommonLayer.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using CommonLayer.Dtos;
+
 
 [ApiController]
 [Route("api/[controller]")]
@@ -73,6 +76,12 @@ public class CoursesController : ControllerBase
     {
         var categories = await _businessHandler.LoadCategoriesAsync();
         return Ok(categories);
+    }
+    [HttpPut("UpdateCategory")]
+    public async Task<IActionResult> UpdateCategory([FromBody] CategoryDto category)
+    {
+        var response = await _businessHandler.UpdateCategoryAsync(category);
+        return StatusCode(response.Code == ResponseMessages.SuccessCode ? 200 : 400, response);
     }
 
 }

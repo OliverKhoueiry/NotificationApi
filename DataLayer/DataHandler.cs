@@ -723,6 +723,28 @@ namespace DataLayer
             return categories;
         }
 
+        public async Task<ApiResponse> UpdateCategoryAsync(CategoryDto category)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            using (var command = new SqlCommand("UPDATE CourseCategories SET Name = @Name WHERE Id = @Id", connection))
+            {
+                command.CommandType = CommandType.Text;
+                command.Parameters.AddWithValue("@Name", category.Name);
+                command.Parameters.AddWithValue("@Id", category.Id);
+
+                await connection.OpenAsync();
+                int rowsAffected = await command.ExecuteNonQueryAsync();
+
+                if (rowsAffected > 0)
+                {
+                    return ResponseMessages.CategoryUpdatedSuccessfully;
+                }
+                else
+                {
+                    return ResponseMessages.CategoryUpdateFailed;
+                }
+            }
+        }
 
     }
 }

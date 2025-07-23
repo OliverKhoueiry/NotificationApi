@@ -73,6 +73,7 @@ namespace BusinessLayer
         Task<IEnumerable<SessionVideo>> GetSessionVideosAsync(int sessionId);
         Task<List<CategoryDto>> LoadCategoriesAsync();
 
+        Task<ApiResponse> UpdateCategoryAsync(CategoryDto category);
 
     }
 }
