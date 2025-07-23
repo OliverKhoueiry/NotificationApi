@@ -74,6 +74,7 @@ namespace BusinessLayer
         Task<List<CategoryDto>> LoadCategoriesAsync();
 
         Task<ApiResponse> UpdateCategoryAsync(CategoryDto category);
+        Task<Course?> GetCourseByIdAsync(int courseId);
 
     }
 }

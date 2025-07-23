@@ -438,6 +438,12 @@ namespace BusinessLayer
             return await _dataHandler.UpdateCategoryAsync(category);
         }
 
+        public async Task<Course?> GetCourseByIdAsync(int courseId)
+        {
+            return await _dataHandler.GetCourseByIdAsync(courseId);
+        }
+
+
 
     }
 }

@@ -746,5 +746,20 @@ namespace DataLayer
             }
         }
 
+        public async Task<Course?> GetCourseByIdAsync(int courseId)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var sql = @"SELECT Id, Title, Overview, Price, Level, DurationWeeks, OnlineClasses, 
+                           Lessons, Quizzes, PassPercentage, Certificate, Language, CategoryId
+                    FROM Courses
+                    WHERE Id = @Id";
+
+                var result = await connection.QueryFirstOrDefaultAsync<Course>(sql, new { Id = courseId });
+                return result;
+            }
+        }
+
+
     }
 }

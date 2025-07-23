@@ -84,4 +84,16 @@ public class CoursesController : ControllerBase
         return StatusCode(response.Code == ResponseMessages.SuccessCode ? 200 : 400, response);
     }
 
+    [HttpGet("GetCourseById/{id}")]
+    public async Task<IActionResult> GetCourseById(int id)
+    {
+        var course = await _businessHandler.GetCourseByIdAsync(id);
+        if (course == null)
+        {
+            return NotFound(new { message = $"Course with ID {id} not found." });
+        }
+        return Ok(course);
+    }
+
+
 }
