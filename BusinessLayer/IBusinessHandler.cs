@@ -79,6 +79,9 @@ namespace BusinessLayer
         Task<ApiResponse> AddUserAsync(UserDto userDto);
         Task<ApiResponse> UpdateUserAsync(int userId, UpdateUserDto userDto);
         Task<ApiResponse> DeleteUserAsync(int userId);
+        Task<ApiResponse> AddRoleAsync(AddRoleDto roleDto);
+        Task<ApiResponse> UpdateRoleAsync(int roleId, AddRoleDto roleDto);
+
 
     }
 }

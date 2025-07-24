@@ -80,6 +80,10 @@
 
         public static readonly ApiResponse UserAlreadyExists =
             new ApiResponse(AlreadyExistsCode, "A user with this email or username already exists.");
+        public static readonly ApiResponse RoleAddedSuccessfully =
+            new ApiResponse(SuccessCode, "Role added successfully.");
+        public static readonly ApiResponse RoleUpdatedSuccessfully =
+            new ApiResponse(SuccessCode, "Role Updated successfully.");
 
 
     }

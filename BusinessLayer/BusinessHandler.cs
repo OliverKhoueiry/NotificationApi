@@ -462,6 +462,14 @@ namespace BusinessLayer
         {
             return await _dataHandler.DeleteUserAsync(userId);
         }
+        public async Task<ApiResponse> AddRoleAsync(AddRoleDto roleDto)
+        {
+            return await _dataHandler.AddRoleAsync(roleDto);
+        }
+        public async Task<ApiResponse> UpdateRoleAsync(int roleId, AddRoleDto roleDto)
+        {
+            return await _dataHandler.UpdateRoleAsync(roleId, roleDto);
+        }
 
     }
 }

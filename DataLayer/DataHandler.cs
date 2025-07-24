@@ -868,5 +868,119 @@ namespace DataLayer
                 : ResponseMessages.Error;
         }
 
+        public async Task<ApiResponse> AddRoleAsync(AddRoleDto roleDto)
+        {
+            try
+            {
+                using var connection = new SqlConnection(_connectionString);
+                await connection.OpenAsync();
+
+                using var transaction = connection.BeginTransaction();
+
+                // Insert into WebRoles table and get the new Role ID
+                var roleId = await connection.ExecuteScalarAsync<int>(
+                    @"INSERT INTO WebRoles (Name, CreatedAt) 
+              OUTPUT INSERTED.Id 
+              VALUES (@Name, GETDATE())",
+                    new { Name = roleDto.RoleName },
+                    transaction: transaction
+                );
+
+                // Insert each section permission into RoleSection
+                foreach (var section in roleDto.Sections)
+                {
+                    // Ensure Actions has exactly 4 booleans (view, add, update, delete)
+                    var actions = section.Actions ?? new List<bool> { false, false, false, false };
+                    while (actions.Count < 4) actions.Add(false);
+
+                    await connection.ExecuteAsync(
+                        @"INSERT INTO RoleSection 
+                  (IdWebRole, IdSection, IsView, IsAdd, IsUpdate, IsDelete, CreatedAt)
+                  VALUES 
+                  (@IdWebRole, @IdSection, @IsView, @IsAdd, @IsUpdate, @IsDelete, GETDATE())",
+                        new
+                        {
+                            IdWebRole = roleId,
+                            IdSection = section.Id,
+                            IsView = actions[0],   // View
+                            IsAdd = actions[1],    // Add
+                            IsUpdate = actions[2], // Update
+                            IsDelete = actions[3]  // Delete
+                        },
+                        transaction: transaction
+                    );
+                }
+
+                await transaction.CommitAsync();
+                return ResponseMessages.RoleAddedSuccessfully;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"AddRoleAsync failed: {ex.Message}");
+                return ResponseMessages.Error;
+            }
+        }
+        public async Task<ApiResponse> UpdateRoleAsync(int roleId, AddRoleDto roleDto)
+        {
+            try
+            {
+                using var connection = new SqlConnection(_connectionString);
+                await connection.OpenAsync();
+
+                using var transaction = connection.BeginTransaction();
+
+                // Update role name in WebRoles
+                await connection.ExecuteAsync(
+                    "UPDATE WebRoles SET Name = @Name WHERE Id = @Id",
+                    new { Name = roleDto.RoleName, Id = roleId },
+                    transaction: transaction
+                );
+
+
+                // Delete old permissions from RoleSection
+                await connection.ExecuteAsync(
+                    @"DELETE FROM RoleSection WHERE IdWebRole = @RoleId",
+                    new { RoleId = roleId },
+                    transaction: transaction
+                );
+
+                // Insert updated permissions into RoleSection
+                foreach (var section in roleDto.Sections)
+                {
+                    // Ensure Actions has exactly 4 booleans (view, add, update, delete)
+                    var actions = section.Actions ?? new List<bool> { false, false, false, false };
+                    while (actions.Count < 4) actions.Add(false);
+
+                    await connection.ExecuteAsync(
+                        @"INSERT INTO RoleSection
+                  (IdWebRole, IdSection, IsView, IsAdd, IsUpdate, IsDelete, CreatedAt)
+                  VALUES
+                  (@IdWebRole, @IdSection, @IsView, @IsAdd, @IsUpdate, @IsDelete, GETDATE())",
+                        new
+                        {
+                            IdWebRole = roleId,
+                            IdSection = section.Id,
+                            IsView = actions[0],
+                            IsAdd = actions[1],
+                            IsUpdate = actions[2],
+                            IsDelete = actions[3]
+                        },
+                        transaction: transaction
+                    );
+                }
+
+                await transaction.CommitAsync();
+                return ResponseMessages.RoleUpdatedSuccessfully;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"UpdateRoleAsync failed: {ex}");
+                return ResponseMessages.Error;
+            }
+        }
+
+
+
+
     }
 }

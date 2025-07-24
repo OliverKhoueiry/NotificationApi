@@ -59,6 +59,20 @@ namespace NotificationApi.Controllers
             var permissions = await _businessHandler.GetRolePermissionsAsync(roleId);
             return Ok(permissions);
         }
+
+        [HttpPost("AddRole")]
+        public async Task<IActionResult> AddRole([FromBody] AddRoleDto roleDto)
+        {
+            var response = await _businessHandler.AddRoleAsync(roleDto);
+            return StatusCode(response.Code == ResponseMessages.SuccessCode ? 200 : 400, response);
+        }
+        [HttpPut("UpdateRole/{roleId}")]
+        public async Task<IActionResult> UpdateRole(int roleId, [FromBody] AddRoleDto roleDto)
+        {
+            var response = await _businessHandler.UpdateRoleAsync(roleId, roleDto);
+            return StatusCode(response.Code == ResponseMessages.SuccessCode ? 200 : 400, response);
+        }
+
     }
 
     //public class PermissionRequest
