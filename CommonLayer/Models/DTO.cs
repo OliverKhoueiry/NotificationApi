@@ -79,3 +79,25 @@ public class RoleSectionDto
     public bool IsDelete { get; set; }
 }
 
+public class CourseDetailsDto
+{
+    public int Id { get; set; }
+    public string Title { get; set; } = "";
+    public string Description { get; set; } = "";
+    public int Lessons { get; set; }
+    public string Level { get; set; } = "";
+    public int DurationWeeks { get; set; }
+    public bool OnlineClasses { get; set; }
+    public int Quizzes { get; set; }
+    public int PassPercentage { get; set; }
+    public bool Certificate { get; set; }
+    public string Language { get; set; } = "";
+    public string CourseImage { get; set; } = "";
+    public string CourseSummary { get; set; } = "";
+    public string AuthorName { get; set; } = "";
+    public string AuthorImage { get; set; } = "";
+    public int ReviewsCount { get; set; }
+    //public string CourseSummary { get; set; }
+    public List<string> WhatYouWillLearn { get; set; } = new();
+}
+

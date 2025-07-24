@@ -524,6 +524,10 @@ namespace BusinessLayer
         {
             return await _dataHandler.GetRoleByIdAsync(id);
         }
+        public async Task<(ApiResponse response, CourseDetailsDto? course)> GetCourseDetailsAsync(int courseId)
+        {
+            return await _dataHandler.GetCourseDetailsAsync(courseId);
+        }
 
     }
 }

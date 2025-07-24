@@ -94,6 +94,16 @@ public class CoursesController : ControllerBase
         }
         return Ok(course);
     }
+    [HttpGet("courses/{id}/details")]
+    public async Task<IActionResult> GetCourseDetails(int id)
+    {
+        var (response, course) = await _businessHandler.GetCourseDetailsAsync(id);
+        return Ok(new
+        {
+            response,
+            data = course
+        });
+    }
 
 
 }

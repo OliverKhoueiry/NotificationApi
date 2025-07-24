@@ -87,6 +87,9 @@
 
         public static readonly ApiResponse Success =
      new ApiResponse(ErrorCode, "Successfull");
+
+        public static readonly ApiResponse NotFound =
+     new ApiResponse(ErrorCode, "Not Found");
     }
 
     public record ApiResponse(int Code, string Description);

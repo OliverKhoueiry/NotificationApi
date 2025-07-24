@@ -98,6 +98,7 @@ namespace BusinessLayer
         Task<List<CourseImageDto>> GetAllCourseImagesAsync();
         Task<(ApiResponse response, List<RoleDto> roles)> GetAllRolesAsync();
         Task<(ApiResponse response, RoleDto? role)> GetRoleByIdAsync(int id);
+        Task<(ApiResponse response, CourseDetailsDto? course)> GetCourseDetailsAsync(int courseId);
 
     }
 }

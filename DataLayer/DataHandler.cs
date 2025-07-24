@@ -1285,6 +1285,31 @@ namespace DataLayer
 
             return (new ApiResponse(0, "Role fetched successfully"), role);
         }
+        public async Task<(ApiResponse response, CourseDetailsDto? course)> GetCourseDetailsAsync(int courseId)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var parameters = new { CourseId = courseId };
+
+                using var multi = await connection.QueryMultipleAsync("sp_GetCourseDetails", parameters, commandType: CommandType.StoredProcedure);
+
+                // First result: Course main info
+                var courseDetails = await multi.ReadFirstOrDefaultAsync<CourseDetailsDto>();
+                if (courseDetails == null)
+                    return (ResponseMessages.NotFound, null);
+
+                // Second result: Learning outcomes (what you will learn)
+                courseDetails.WhatYouWillLearn = (await multi.ReadAsync<string>()).ToList();
+
+                // Third result: Course summary
+                courseDetails.CourseSummary = await multi.ReadFirstOrDefaultAsync<string>();
+
+                return (ResponseMessages.Success, courseDetails);
+            }
+        }
+
+
+
 
 
 
