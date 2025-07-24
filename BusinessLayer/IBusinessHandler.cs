@@ -96,5 +96,6 @@ namespace BusinessLayer
         Task<ApiResponse> UpdateAuthorAsync(AuthorDto dto);
         Task<ApiResponse> DeleteAuthorAsync(int id);
         Task<List<CourseImageDto>> GetAllCourseImagesAsync();
+        Task<(ApiResponse response, List<RoleDto> roles)> GetAllRolesAsync();
     }
 }

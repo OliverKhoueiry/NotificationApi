@@ -516,6 +516,10 @@ namespace BusinessLayer
         {
             return await _dataHandler.GetAllCourseImagesAsync();
         }
+        public async Task<(ApiResponse response, List<RoleDto> roles)> GetAllRolesAsync()
+        {
+            return await _dataHandler.GetAllRolesAsync();
+        }
 
     }
 }

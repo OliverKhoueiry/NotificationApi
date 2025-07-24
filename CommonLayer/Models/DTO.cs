@@ -1,4 +1,6 @@
-﻿public class AddRoleDto
+﻿using System.Text.Json.Serialization;
+
+public class AddRoleDto
 {
     public string RoleName { get; set; }
     public List<SectionDto> Sections { get; set; }
@@ -59,3 +61,21 @@ public class AuthorDto
     public string PhotoPath { get; set; }
     public int IdCourse { get; set; }
 }
+public class RoleDto
+{
+    public int Id { get; set; }
+    public string RoleName { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public List<RoleSectionDto> Sections { get; set; }
+}
+
+public class RoleSectionDto
+{
+    public int SectionId { get; set; }  // This will be mapped from the Section ID (aliased as SectionId in SQL)
+    public string SectionName { get; set; }
+    public bool IsView { get; set; }
+    public bool IsAdd { get; set; }
+    public bool IsUpdate { get; set; }
+    public bool IsDelete { get; set; }
+}
+

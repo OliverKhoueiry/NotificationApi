@@ -102,6 +102,6 @@ namespace DataLayer
         Task<ApiResponse> AddAuthorAsync(AuthorDto dto);
         Task<ApiResponse> UpdateAuthorAsync(AuthorDto dto);
         Task<ApiResponse> DeleteAuthorAsync(int id);
-
+        Task<(ApiResponse response, List<RoleDto> roles)> GetAllRolesAsync();
     }
 }

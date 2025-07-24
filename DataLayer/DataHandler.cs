@@ -1185,6 +1185,59 @@ namespace DataLayer
             var result = await connection.QueryAsync<CourseImageDto>(sql);
             return result.ToList();
         }
+        public async Task<(ApiResponse response, List<RoleDto> roles)> GetAllRolesAsync()
+        {
+            const string sql = @"
+        SELECT 
+            wr.Id AS Id,
+            wr.Name AS RoleName,
+            wr.CreatedAt,
+
+            s.Id AS SectionId,
+            s.Name AS SectionName,
+
+            rs.IsView,
+            rs.IsAdd,
+            rs.IsUpdate,
+            rs.IsDelete
+        FROM WebRoles wr
+        LEFT JOIN RoleSection rs ON wr.Id = rs.IdWebRole
+        LEFT JOIN Sections s ON rs.IdSection = s.Id
+        ORDER BY wr.Id, s.Id";
+
+            using var connection = new SqlConnection(_connectionString);
+
+            var roleDict = new Dictionary<int, RoleDto>();
+
+            var result = await connection.QueryAsync<RoleDto, RoleSectionDto, RoleDto>(
+                sql,
+                (role, section) =>
+                {
+                    if (!roleDict.TryGetValue(role.Id, out var currentRole))
+                    {
+                        currentRole = role;
+                        currentRole.Sections = new List<RoleSectionDto>();
+                        roleDict.Add(currentRole.Id, currentRole);
+                    }
+
+                    if (section != null && section.SectionId > 0)
+                    {
+                        currentRole.Sections.Add(section);
+                    }
+
+                    return currentRole;
+                },
+                splitOn: "SectionId"
+            );
+
+            var roles = roleDict.Values.ToList();
+            return (new ApiResponse(0, "Roles fetched successfully"), roles);
+        }
+
+
+
+
+
 
 
     }

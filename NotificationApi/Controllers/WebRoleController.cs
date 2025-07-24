@@ -72,6 +72,20 @@ namespace NotificationApi.Controllers
             var response = await _businessHandler.UpdateRoleAsync(roleId, roleDto);
             return StatusCode(response.Code == ResponseMessages.SuccessCode ? 200 : 400, response);
         }
+        [HttpGet]
+        public async Task<IActionResult> GetAllRoles()
+        {
+            var (response, roles) = await _businessHandler.GetAllRolesAsync();
+
+            if (response.Code != ResponseMessages.SuccessCode)
+                return BadRequest(response);
+
+            return Ok(new
+            {
+                Response = response,
+                Data = roles
+            });
+        }
 
     }
 
