@@ -470,6 +470,10 @@ namespace BusinessLayer
         {
             return await _dataHandler.UpdateRoleAsync(roleId, roleDto);
         }
+        public async Task<HomeResponseDto> GetHomeDataAsync()
+        {
+            return await _dataHandler.GetHomeDataAsync();
+        }
 
     }
 }

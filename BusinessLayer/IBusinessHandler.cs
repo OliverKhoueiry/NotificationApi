@@ -82,6 +82,7 @@ namespace BusinessLayer
         Task<ApiResponse> AddRoleAsync(AddRoleDto roleDto);
         Task<ApiResponse> UpdateRoleAsync(int roleId, AddRoleDto roleDto);
 
+        Task<HomeResponseDto> GetHomeDataAsync();
 
     }
 }

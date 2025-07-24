@@ -128,6 +128,13 @@ namespace NotificationApi.Controllers
             var response = await _businessHandler.DeleteUserAsync(id);
             return StatusCode(response.Code == ResponseMessages.SuccessCode ? 200 : 400, response);
         }
+        [HttpGet("api/home")]
+        public async Task<IActionResult> GetHomeData()
+        {
+            var homeData = await _businessHandler.GetHomeDataAsync();
+            return Ok(homeData);
+        }
+
         // ✅ New endpoint: Get permissions for a section based on token + section name
         [HttpPost("section")]
         public async Task<IActionResult> GetSectionPermissions([FromBody] SectionRequest request)

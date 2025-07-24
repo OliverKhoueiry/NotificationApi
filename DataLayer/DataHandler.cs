@@ -979,6 +979,55 @@ namespace DataLayer
             }
         }
 
+        public async Task<HomeResponseDto> GetHomeDataAsync()
+        {
+            var categorySql = @"
+        SELECT TOP 6 
+            cc.Id,
+            cc.Name,
+            ci.ImagePath AS CategoryImagePath,
+            (
+                SELECT COUNT(*) 
+                FROM Courses c 
+                WHERE c.CategoryId = cc.Id
+            ) AS CourseCount
+        FROM CourseCategories cc
+        LEFT JOIN CategoryImages ci ON cc.Id = ci.CategoryId;
+    ";
+
+            var courseSql = @"
+        SELECT TOP 6 
+            c.Id,
+            c.Title,
+            ci.ImagePath AS CourseImagePath,
+            c.Lessons,
+            (
+                SELECT COUNT(*) 
+                FROM Reviews r 
+                WHERE r.CourseId = c.Id
+            ) AS ReviewCount,
+            ci.Description,
+            a.Name AS AuthorName,
+            a.PhotoPath AS AuthorImage
+        FROM Courses c
+        LEFT JOIN CourseImages ci ON c.Id = ci.CourseId
+        LEFT JOIN Author a ON c.Id = a.IdCourse;
+    ";
+
+            using var connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            var categories = (await connection.QueryAsync<HomeCategoryItemDto>(categorySql)).AsList();
+            var courses = (await connection.QueryAsync<HomeCourseItemDto>(courseSql)).AsList();
+
+            return new HomeResponseDto
+            {
+                Categories = categories,
+                Courses = courses
+            };
+        }
+
+
 
 
 
