@@ -765,15 +765,21 @@ namespace DataLayer
             using (var connection = new SqlConnection(_connectionString))
             {
                 var sql = @"
-            SELECT u.Username, u.Email, u.CreatedAt, u.Role
+            SELECT 
+                u.Id,
+                u.Username,
+                u.Email,
+                u.CreatedAt,
+                r.Id AS RoleId
             FROM Users u
-            
+            LEFT JOIN WebRoles r ON u.Role = r.Name
         ";
 
                 var users = await connection.QueryAsync<UserDto>(sql);
                 return users.ToList();
             }
         }
+
 
         public async Task<ApiResponse> AddUserAsync(UserDto userDto)
         {
