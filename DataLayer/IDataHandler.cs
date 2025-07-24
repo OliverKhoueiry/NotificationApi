@@ -89,7 +89,19 @@ namespace DataLayer
 
         Task<HomeResponseDto> GetHomeDataAsync();
 
+        Task<List<CourseImageDto>> GetAllCourseImagesAsync();
+        Task<ApiResponse> AddCourseImageAsync(CourseImageDto dto);
+        Task<ApiResponse> UpdateCourseImageAsync(CourseImageDto dto);
+        Task<ApiResponse> DeleteCourseImageAsync(int id);
+        Task<List<CategoryImageDto>> GetAllCategoryImagesAsync();
+        Task<ApiResponse> AddCategoryImageAsync(CategoryImageDto dto);
+        Task<ApiResponse> UpdateCategoryImageAsync(CategoryImageDto dto);
+        Task<ApiResponse> DeleteCategoryImageAsync(int id);
 
+        Task<List<AuthorDto>> GetAllAuthorsAsync();
+        Task<ApiResponse> AddAuthorAsync(AuthorDto dto);
+        Task<ApiResponse> UpdateAuthorAsync(AuthorDto dto);
+        Task<ApiResponse> DeleteAuthorAsync(int id);
 
     }
 }

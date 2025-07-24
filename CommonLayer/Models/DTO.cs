@@ -34,3 +34,28 @@ public class HomeResponseDto
     public List<HomeCategoryItemDto> Categories { get; set; }
     public List<HomeCourseItemDto> Courses { get; set; }
 }
+
+public class CourseImageDto
+{
+    public int Id { get; set; }
+    public int CourseId { get; set; }
+    public string ImagePath { get; set; }
+    public string Description { get; set; }
+    public DateTime CreatedAt { get; set; }
+}
+
+public class CategoryImageDto
+{
+    public int Id { get; set; }
+    public int CategoryId { get; set; }
+    public string ImagePath { get; set; }
+    public DateTime CreatedAt { get; set; }
+}
+
+public class AuthorDto
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public string PhotoPath { get; set; }
+    public int IdCourse { get; set; }
+}

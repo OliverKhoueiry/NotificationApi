@@ -474,6 +474,48 @@ namespace BusinessLayer
         {
             return await _dataHandler.GetHomeDataAsync();
         }
+        public async Task<ApiResponse> AddCourseImageAsync(CourseImageDto dto) =>
+             await _dataHandler.AddCourseImageAsync(dto);
+
+        public async Task<ApiResponse> UpdateCourseImageAsync(CourseImageDto dto) =>
+            await _dataHandler.UpdateCourseImageAsync(dto);
+
+        public async Task<ApiResponse> DeleteCourseImageAsync(int id) =>
+            await _dataHandler.DeleteCourseImageAsync(id);
+
+
+
+        // CategoryImages
+
+        public async Task<List<CategoryImageDto>> GetAllCategoryImagesAsync() =>
+            await _dataHandler.GetAllCategoryImagesAsync();
+
+        public async Task<ApiResponse> AddCategoryImageAsync(CategoryImageDto dto) =>
+            await _dataHandler.AddCategoryImageAsync(dto);
+
+        public async Task<ApiResponse> UpdateCategoryImageAsync(CategoryImageDto dto) =>
+            await _dataHandler.UpdateCategoryImageAsync(dto);
+
+        public async Task<ApiResponse> DeleteCategoryImageAsync(int id) =>
+            await _dataHandler.DeleteCategoryImageAsync(id);
+
+        // Author
+
+        public async Task<List<AuthorDto>> GetAllAuthorsAsync() =>
+            await _dataHandler.GetAllAuthorsAsync();
+
+        public async Task<ApiResponse> AddAuthorAsync(AuthorDto dto) =>
+            await _dataHandler.AddAuthorAsync(dto);
+
+        public async Task<ApiResponse> UpdateAuthorAsync(AuthorDto dto) =>
+            await _dataHandler.UpdateAuthorAsync(dto);
+
+        public async Task<ApiResponse> DeleteAuthorAsync(int id) =>
+            await _dataHandler.DeleteAuthorAsync(id);
+        public async Task<List<CourseImageDto>> GetAllCourseImagesAsync()
+        {
+            return await _dataHandler.GetAllCourseImagesAsync();
+        }
 
     }
 }

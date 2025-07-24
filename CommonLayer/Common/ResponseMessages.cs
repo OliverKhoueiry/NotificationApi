@@ -85,7 +85,8 @@
         public static readonly ApiResponse RoleUpdatedSuccessfully =
             new ApiResponse(SuccessCode, "Role Updated successfully.");
 
-
+        public static readonly ApiResponse Success =
+     new ApiResponse(ErrorCode, "Successfull");
     }
 
     public record ApiResponse(int Code, string Description);

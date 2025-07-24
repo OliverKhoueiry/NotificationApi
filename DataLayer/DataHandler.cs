@@ -1033,8 +1033,158 @@ namespace DataLayer
             };
         }
 
+        public async Task<ApiResponse> AddCourseImageAsync(CourseImageDto dto)
+        {
+            var sql = @"
+        INSERT INTO CourseImages (CourseId, ImagePath, Description, CreatedAt)
+        VALUES (@CourseId, @ImagePath, @Description, @CreatedAt)";
 
+            using var connection = new SqlConnection(_connectionString);
+            var result = await connection.ExecuteAsync(sql, dto);
 
+            return result > 0
+                ? ResponseMessages.Success
+                : ResponseMessages.Error;
+        }
+
+        public async Task<ApiResponse> UpdateCourseImageAsync(CourseImageDto dto)
+        {
+            var sql = @"
+        UPDATE CourseImages
+        SET CourseId = @CourseId,
+            ImagePath = @ImagePath,
+            Description = @Description,
+            CreatedAt = @CreatedAt
+        WHERE Id = @Id";
+
+            using var connection = new SqlConnection(_connectionString);
+            var result = await connection.ExecuteAsync(sql, dto);
+
+            return result > 0
+                ? ResponseMessages.Success
+                : ResponseMessages.Error;
+        }
+
+        public async Task<ApiResponse> DeleteCourseImageAsync(int id)
+        {
+            var sql = "DELETE FROM CourseImages WHERE Id = @Id";
+            using var connection = new SqlConnection(_connectionString);
+            var result = await connection.ExecuteAsync(sql, new { Id = id });
+
+            return result > 0
+                ? ResponseMessages.Success
+                : ResponseMessages.Error;
+        }
+
+        public async Task<List<CategoryImageDto>> GetAllCategoryImagesAsync()
+        {
+            var sql = "SELECT * FROM CategoryImages";
+            using var connection = new SqlConnection(_connectionString);
+            var result = await connection.QueryAsync<CategoryImageDto>(sql);
+            return result.ToList();
+        }
+
+        public async Task<ApiResponse> AddCategoryImageAsync(CategoryImageDto dto)
+        {
+            var sql = @"
+        INSERT INTO CategoryImages (CategoryId, ImagePath, CreatedAt)
+        VALUES (@CategoryId, @ImagePath, @CreatedAt)";
+
+            using var connection = new SqlConnection(_connectionString);
+            var result = await connection.ExecuteAsync(sql, dto);
+
+            return result > 0
+                ? ResponseMessages.Success
+                : ResponseMessages.Error;
+        }
+
+        public async Task<ApiResponse> UpdateCategoryImageAsync(CategoryImageDto dto)
+        {
+            var sql = @"
+        UPDATE CategoryImages
+        SET CategoryId = @CategoryId,
+            ImagePath = @ImagePath,
+            CreatedAt = @CreatedAt
+        WHERE Id = @Id";
+
+            using var connection = new SqlConnection(_connectionString);
+            var result = await connection.ExecuteAsync(sql, dto);
+
+            return result > 0
+                ? ResponseMessages.Success
+                : ResponseMessages.Error;
+        }
+
+        public async Task<ApiResponse> DeleteCategoryImageAsync(int id)
+        {
+            var sql = "DELETE FROM CategoryImages WHERE Id = @Id";
+            using var connection = new SqlConnection(_connectionString);
+            var result = await connection.ExecuteAsync(sql, new { Id = id });
+
+            return result > 0
+                ? ResponseMessages.Success
+                : ResponseMessages.Error;
+        }
+
+        public async Task<List<AuthorDto>> GetAllAuthorsAsync()
+        {
+            var sql = "SELECT * FROM Author";
+            using var connection = new SqlConnection(_connectionString);
+            var result = await connection.QueryAsync<AuthorDto>(sql);
+            return result.ToList();
+        }
+
+        public async Task<ApiResponse> AddAuthorAsync(AuthorDto dto)
+        {
+            var sql = @"
+        INSERT INTO Author (Name, PhotoPath, IdCourse)
+        VALUES (@Name, @PhotoPath, @IdCourse)";
+
+            using var connection = new SqlConnection(_connectionString);
+            var result = await connection.ExecuteAsync(sql, dto);
+
+            return result > 0
+                ? ResponseMessages.Success
+                : ResponseMessages.Error;
+        }
+
+        public async Task<ApiResponse> UpdateAuthorAsync(AuthorDto dto)
+        {
+            var sql = @"
+        UPDATE Author
+        SET Name = @Name,
+            PhotoPath = @PhotoPath,
+            IdCourse = @IdCourse
+        WHERE Id = @Id";
+
+            using var connection = new SqlConnection(_connectionString);
+            var result = await connection.ExecuteAsync(sql, dto);
+
+            return result > 0
+                ? ResponseMessages.Success
+                : ResponseMessages.Error;
+        }
+
+        public async Task<ApiResponse> DeleteAuthorAsync(int id)
+        {
+            var sql = "DELETE FROM Author WHERE Id = @Id";
+            using var connection = new SqlConnection(_connectionString);
+            var result = await connection.ExecuteAsync(sql, new { Id = id });
+
+            return result > 0
+                ? ResponseMessages.Success
+                : ResponseMessages.Error;
+        }
+        public async Task<List<CourseImageDto>> GetAllCourseImagesAsync()
+        {
+            var sql = @"
+        SELECT Id, CourseId, ImagePath, CreatedAt, Description
+        FROM CourseImages";
+
+            using var connection = new SqlConnection(_connectionString);
+            var result = await connection.QueryAsync<CourseImageDto>(sql);
+            return result.ToList();
+        }
 
 
     }
