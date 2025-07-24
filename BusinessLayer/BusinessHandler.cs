@@ -520,6 +520,10 @@ namespace BusinessLayer
         {
             return await _dataHandler.GetAllRolesAsync();
         }
+        public async Task<(ApiResponse response, RoleDto? role)> GetRoleByIdAsync(int id)
+        {
+            return await _dataHandler.GetRoleByIdAsync(id);
+        }
 
     }
 }

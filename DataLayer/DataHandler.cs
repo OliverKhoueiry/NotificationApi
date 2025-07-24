@@ -1234,6 +1234,57 @@ namespace DataLayer
             return (new ApiResponse(0, "Roles fetched successfully"), roles);
         }
 
+        public async Task<(ApiResponse response, RoleDto? role)> GetRoleByIdAsync(int id)
+        {
+            const string sql = @"
+        SELECT 
+            wr.Id AS Id,
+            wr.Name AS RoleName,
+            wr.CreatedAt,
+
+            s.Id AS SectionId,
+            s.Name AS SectionName,
+
+            rs.IsView,
+            rs.IsAdd,
+            rs.IsUpdate,
+            rs.IsDelete
+        FROM WebRoles wr
+        LEFT JOIN RoleSection rs ON wr.Id = rs.IdWebRole
+        LEFT JOIN Sections s ON rs.IdSection = s.Id
+        WHERE wr.Id = @Id
+        ORDER BY s.Id";
+
+            using var connection = new SqlConnection(_connectionString);
+
+            RoleDto? role = null;
+
+            var result = await connection.QueryAsync<RoleDto, RoleSectionDto, RoleDto>(
+                sql,
+                (r, section) =>
+                {
+                    if (role == null)
+                    {
+                        role = r;
+                        role.Sections = new List<RoleSectionDto>();
+                    }
+
+                    if (section != null && section.SectionId > 0)
+                    {
+                        role.Sections.Add(section);
+                    }
+
+                    return role;
+                },
+                new { Id = id },
+                splitOn: "SectionId"
+            );
+
+            if (role == null)
+                return (new ApiResponse(1, "Role not found"), null);
+
+            return (new ApiResponse(0, "Role fetched successfully"), role);
+        }
 
 
 

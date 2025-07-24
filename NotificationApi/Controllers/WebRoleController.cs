@@ -72,7 +72,7 @@ namespace NotificationApi.Controllers
             var response = await _businessHandler.UpdateRoleAsync(roleId, roleDto);
             return StatusCode(response.Code == ResponseMessages.SuccessCode ? 200 : 400, response);
         }
-        [HttpGet]
+        [HttpGet("roles")]
         public async Task<IActionResult> GetAllRoles()
         {
             var (response, roles) = await _businessHandler.GetAllRolesAsync();
@@ -84,6 +84,17 @@ namespace NotificationApi.Controllers
             {
                 Response = response,
                 Data = roles
+            });
+        }
+        [HttpGet("roles/{id}")]
+        public async Task<IActionResult> GetRoleById(int id)
+        {
+            var (response, role) = await _businessHandler.GetRoleByIdAsync(id);
+
+            return Ok(new
+            {
+                response,
+                data = role
             });
         }
 
