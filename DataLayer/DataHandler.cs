@@ -1305,11 +1305,81 @@ namespace DataLayer
                 courseDetails.CourseSummary = await multi.ReadFirstOrDefaultAsync<string>();
 
                 return (ResponseMessages.Success, courseDetails);
+
+
             }
         }
 
+        // Add CourseLearningOutcome
+        public async Task<ApiResponse> AddCourseLearningOutcomeAsync(CourseLearningOutcomeDto dto)
+        {
+            var sql = @"INSERT INTO CourseLearningOutcomes (CourseId, Description)
+                VALUES (@CourseId, @Description)";
+            using var connection = new SqlConnection(_connectionString);
+            var result = await connection.ExecuteAsync(sql, dto);
+            return result > 0 ? ResponseMessages.Success : ResponseMessages.Error;
+        }
 
+        // Update CourseLearningOutcome
+        public async Task<ApiResponse> UpdateCourseLearningOutcomeAsync(CourseLearningOutcomeDto dto)
+        {
+            var sql = @"UPDATE CourseLearningOutcomes SET Description = @Description WHERE Id = @Id";
+            using var connection = new SqlConnection(_connectionString);
+            var result = await connection.ExecuteAsync(sql, dto);
+            return result > 0 ? ResponseMessages.Success : ResponseMessages.Error;
+        }
 
+        // Delete CourseLearningOutcome
+        public async Task<ApiResponse> DeleteCourseLearningOutcomeAsync(int id)
+        {
+            var sql = @"DELETE FROM CourseLearningOutcomes WHERE Id = @Id";
+            using var connection = new SqlConnection(_connectionString);
+            var result = await connection.ExecuteAsync(sql, new { Id = id });
+            return result > 0 ? ResponseMessages.Success : ResponseMessages.Error;
+        }
+
+        // Get All CourseLearningOutcomes for a course
+        public async Task<List<CourseLearningOutcomeDto>> GetAllCourseLearningOutcomesAsync(int courseId)
+        {
+            var sql = @"SELECT Id, CourseId, Description FROM CourseLearningOutcomes WHERE CourseId = @CourseId";
+            using var connection = new SqlConnection(_connectionString);
+            var list = await connection.QueryAsync<CourseLearningOutcomeDto>(sql, new { CourseId = courseId });
+            return list.ToList();
+        }
+
+        // Add CourseSummary
+        public async Task<ApiResponse> AddCourseSummaryAsync(CourseSummaryDto dto)
+        {
+            var sql = @"INSERT INTO CourseSummary (CourseId, Summary) VALUES (@CourseId, @Summary)";
+            using var connection = new SqlConnection(_connectionString);
+            var result = await connection.ExecuteAsync(sql, new { dto.CourseId, Summary = dto.Summary });
+            return result > 0 ? ResponseMessages.Success : ResponseMessages.Error;
+        }
+
+        // Update CourseSummary
+        public async Task<ApiResponse> UpdateCourseSummaryAsync(CourseSummaryDto dto)
+        {
+            var sql = @"UPDATE CourseSummary SET Summary = @Summary WHERE Id = @Id";
+            using var connection = new SqlConnection(_connectionString);
+            var result = await connection.ExecuteAsync(sql, new { dto.Id, Summary = dto.Summary });
+            return result > 0 ? ResponseMessages.Success : ResponseMessages.Error;
+        }
+
+        // Get CourseSummary by courseId
+        public async Task<CourseSummaryDto?> GetCourseSummaryAsync(int courseId)
+        {
+            var sql = @"SELECT Id, CourseId, Summary AS Summary FROM CourseSummary WHERE CourseId = @CourseId";
+            using var connection = new SqlConnection(_connectionString);
+            return await connection.QueryFirstOrDefaultAsync<CourseSummaryDto>(sql, new { CourseId = courseId });
+        }
+        // Delete CourseSummary
+        public async Task<ApiResponse> DeleteCourseSummaryAsync(int id)
+        {
+            var sql = @"DELETE FROM CourseSummary WHERE Id = @Id";
+            using var connection = new SqlConnection(_connectionString);
+            var result = await connection.ExecuteAsync(sql, new { Id = id });
+            return result > 0 ? ResponseMessages.Success : ResponseMessages.Error;
+        }
 
 
 

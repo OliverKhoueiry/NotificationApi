@@ -528,6 +528,29 @@ namespace BusinessLayer
         {
             return await _dataHandler.GetCourseDetailsAsync(courseId);
         }
+        public Task<ApiResponse> AddCourseLearningOutcomeAsync(CourseLearningOutcomeDto dto) =>
+    _dataHandler.AddCourseLearningOutcomeAsync(dto);
+
+        public Task<ApiResponse> UpdateCourseLearningOutcomeAsync(CourseLearningOutcomeDto dto) =>
+            _dataHandler.UpdateCourseLearningOutcomeAsync(dto);
+
+        public Task<ApiResponse> DeleteCourseLearningOutcomeAsync(int id) =>
+            _dataHandler.DeleteCourseLearningOutcomeAsync(id);
+
+        public Task<List<CourseLearningOutcomeDto>> GetAllCourseLearningOutcomesAsync(int courseId) =>
+            _dataHandler.GetAllCourseLearningOutcomesAsync(courseId);
+
+        public Task<ApiResponse> AddCourseSummaryAsync(CourseSummaryDto dto) =>
+            _dataHandler.AddCourseSummaryAsync(dto);
+
+        public Task<ApiResponse> UpdateCourseSummaryAsync(CourseSummaryDto dto) =>
+            _dataHandler.UpdateCourseSummaryAsync(dto);
+
+        public Task<ApiResponse> DeleteCourseSummaryAsync(int id) =>
+            _dataHandler.DeleteCourseSummaryAsync(id);
+
+        public Task<CourseSummaryDto?> GetCourseSummaryAsync(int courseId) =>
+            _dataHandler.GetCourseSummaryAsync(courseId);
 
     }
 }

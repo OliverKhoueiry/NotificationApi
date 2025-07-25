@@ -104,6 +104,64 @@ public class CoursesController : ControllerBase
             data = course
         });
     }
+    // CourseLearningOutcomes
+    [HttpGet("learning-outcomes/{courseId}")]
+    public async Task<ActionResult<List<CourseLearningOutcomeDto>>> GetLearningOutcomes(int courseId)
+    {
+        var list = await _businessHandler.GetAllCourseLearningOutcomesAsync(courseId);
+        return Ok(list);
+    }
 
+    [HttpPost("learning-outcomes")]
+    public async Task<ActionResult<ApiResponse>> AddLearningOutcome([FromBody] CourseLearningOutcomeDto dto)
+    {
+        var response = await _businessHandler.AddCourseLearningOutcomeAsync(dto);
+        return Ok(response);
+    }
 
+    [HttpPut("learning-outcomes")]
+    public async Task<ActionResult<ApiResponse>> UpdateLearningOutcome([FromBody] CourseLearningOutcomeDto dto)
+    {
+        var response = await _businessHandler.UpdateCourseLearningOutcomeAsync(dto);
+        return Ok(response);
+    }
+
+    [HttpDelete("learning-outcomes/{id}")]
+    public async Task<ActionResult<ApiResponse>> DeleteLearningOutcome(int id)
+    {
+        var response = await _businessHandler.DeleteCourseLearningOutcomeAsync(id);
+        return Ok(response);
+    }
+
+    // CourseSummary
+    [HttpGet("summary/{courseId}")]
+    public async Task<ActionResult<CourseSummaryDto?>> GetSummary(int courseId)
+    {
+        var summary = await _businessHandler.GetCourseSummaryAsync(courseId);
+        return Ok(summary);
+    }
+
+    [HttpPost("summary")]
+    public async Task<ActionResult<ApiResponse>> AddSummary([FromBody] CourseSummaryDto dto)
+    {
+        var response = await _businessHandler.AddCourseSummaryAsync(dto);
+        return Ok(response);
+    }
+
+    [HttpPut("summary")]
+    public async Task<ActionResult<ApiResponse>> UpdateSummary([FromBody] CourseSummaryDto dto)
+    {
+        var response = await _businessHandler.UpdateCourseSummaryAsync(dto);
+        return Ok(response);
+    }
+
+    [HttpDelete("summary/{id}")]
+    public async Task<ActionResult<ApiResponse>> DeleteSummary(int id)
+    {
+        var response = await _businessHandler.DeleteCourseSummaryAsync(id);
+        return Ok(response);
+    }
 }
+
+
+

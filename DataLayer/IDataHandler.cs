@@ -105,6 +105,17 @@ namespace DataLayer
         Task<(ApiResponse response, List<RoleDto> roles)> GetAllRolesAsync();
         Task<(ApiResponse response, RoleDto? role)> GetRoleByIdAsync(int id);
         Task<(ApiResponse response, CourseDetailsDto? course)> GetCourseDetailsAsync(int courseId);
+        // CourseLearningOutcomes
+        Task<ApiResponse> AddCourseLearningOutcomeAsync(CourseLearningOutcomeDto dto);
+        Task<ApiResponse> UpdateCourseLearningOutcomeAsync(CourseLearningOutcomeDto dto);
+        Task<ApiResponse> DeleteCourseLearningOutcomeAsync(int id);
+        Task<List<CourseLearningOutcomeDto>> GetAllCourseLearningOutcomesAsync(int courseId);
+
+        // CourseSummary
+        Task<ApiResponse> AddCourseSummaryAsync(CourseSummaryDto dto);
+        Task<ApiResponse> UpdateCourseSummaryAsync(CourseSummaryDto dto);
+        Task<ApiResponse> DeleteCourseSummaryAsync(int id);
+        Task<CourseSummaryDto?> GetCourseSummaryAsync(int courseId);
 
     }
 }

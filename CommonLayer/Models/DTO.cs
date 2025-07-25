@@ -101,3 +101,18 @@ public class CourseDetailsDto
     public List<string> WhatYouWillLearn { get; set; } = new();
 }
 
+public class CourseLearningOutcomeDto
+{
+    public int Id { get; set; }
+    public int CourseId { get; set; }
+    public string Description { get; set; }
+}
+
+public class CourseSummaryDto
+{
+    public int Id { get; set; }
+    public int CourseId { get; set; }
+    public string Summary { get; set; }
+}
+
+
